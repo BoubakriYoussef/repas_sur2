@@ -1,0 +1,12 @@
+.env
+.env.*
+package.json
+package-lock.json
+.idea/
+.m2-local/
+**/node_modules/
+**/dist/
+**/target/
+**/.angular/cache/
+*.log
+*.tmp

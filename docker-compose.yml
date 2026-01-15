@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-repas_sur}
+      POSTGRES_USER: ${POSTGRES_USER:-repas_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-repas_pass}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - app
+
+  backend:
+    build:
+      context: ./backend/repas_sur_backend2
+    restart: unless-stopped
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-repas_sur}
+      DB_USERNAME: ${POSTGRES_USER:-repas_user}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-repas_pass}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      JWT_SECRET: ${JWT_SECRET:-}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
+    depends_on:
+      - db
+    networks:
+      - app
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend/repas_sur_frontend2
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - app
+    ports:
+      - "80:80"
+
+volumes:
+  db_data:
+
+networks:
+  app:
+    driver: bridge

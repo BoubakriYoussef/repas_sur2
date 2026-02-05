@@ -11,7 +11,7 @@ RUN npm run build -- --configuration production
 FROM nginx:1.25-alpine
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist/repas_sur_frontend2/ /usr/share/nginx/html/
+COPY --from=build /app/dist/repas_sur_frontend2_tmp/ /usr/share/nginx/html/
 
 EXPOSE 80
 

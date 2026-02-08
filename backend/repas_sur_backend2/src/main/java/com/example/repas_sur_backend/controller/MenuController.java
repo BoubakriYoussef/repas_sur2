@@ -1,10 +1,13 @@
 package com.example.repas_sur_backend.controller;
 
-import com.example.repas_sur_backend.model.Menu;
+import com.example.repas_sur_backend.dto.MenuDto;
+import com.example.repas_sur_backend.dto.MenuRequest;
 import com.example.repas_sur_backend.service.MenuService;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,27 +28,32 @@ public class MenuController {
     }
 
     @GetMapping
-    public List<Menu> getAll() {
+    @PreAuthorize("hasAnyRole('ADMIN','RESPONSABLE','CUISINE')")
+    public List<MenuDto> getAll() {
         return menuService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Menu getById(@PathVariable Long id) {
+    @PreAuthorize("hasAnyRole('ADMIN','RESPONSABLE','CUISINE')")
+    public MenuDto getById(@PathVariable Long id) {
         return menuService.getById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Menu> create(@RequestBody Menu menu) {
-        Menu created = menuService.save(menu);
+    @PreAuthorize("hasAnyRole('ADMIN','RESPONSABLE')")
+    public ResponseEntity<MenuDto> create(@Valid @RequestBody MenuRequest request) {
+        MenuDto created = menuService.save(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public Menu update(@PathVariable Long id, @RequestBody Menu menu) {
-        return menuService.update(id, menu);
+    @PreAuthorize("hasAnyRole('ADMIN','RESPONSABLE')")
+    public MenuDto update(@PathVariable Long id, @Valid @RequestBody MenuRequest request) {
+        return menuService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','RESPONSABLE')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         menuService.delete(id);
         return ResponseEntity.noContent().build();

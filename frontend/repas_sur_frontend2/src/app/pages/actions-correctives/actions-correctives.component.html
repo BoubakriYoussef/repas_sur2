@@ -1,0 +1,69 @@
+<div class="flex items-center justify-between">
+  <div>
+    <h2 class="app-title text-2xl font-semibold">Actions correctives</h2>
+    <p class="text-sm text-muted">Tracer les resolutions d'alertes</p>
+  </div>
+</div>
+
+<form class="mt-6 grid gap-4 rounded-3xl border border-stroke bg-card p-6 shadow-soft" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="grid gap-4 md:grid-cols-3">
+    <input type="datetime-local" class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="date" />
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="typeAction">
+      <option *ngFor="let t of typeActions" [value]="t">{{ t }}</option>
+    </select>
+    <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Description" formControlName="description" />
+  </div>
+  <div class="grid gap-4 md:grid-cols-2">
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="alerteId">
+      <option *ngFor="let alerte of alertes" [value]="alerte.id">{{ alerte.convive?.nom || 'Convive' }} - {{ alerte.niveau }}</option>
+    </select>
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="utilisateurId">
+      <option *ngFor="let user of utilisateurs" [value]="user.id">{{ user.username }} ({{ user.role }})</option>
+    </select>
+  </div>
+  <div class="flex flex-wrap gap-3">
+    <button type="submit" class="w-fit rounded-full bg-accent px-5 py-2 text-sm font-semibold text-white">
+      {{ editingId ? 'Mettre a jour' : 'Ajouter action' }}
+    </button>
+    <button type="button" class="w-fit rounded-full border border-stroke px-5 py-2 text-sm font-semibold" (click)="cancelEdit()" *ngIf="editingId">Annuler</button>
+  </div>
+</form>
+
+<form class="mt-4 grid gap-4 rounded-3xl border border-stroke bg-white/70 p-4 shadow-soft" [formGroup]="filterForm" (ngSubmit)="$event.preventDefault()">
+  <div class="grid gap-4 md:grid-cols-4">
+    <select class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="alerteId" (change)="applyFilters()">
+      <option value="TOUT">Toutes les alertes</option>
+      <option *ngFor="let alerte of alertes" [value]="alerte.id">{{ alerte.convive?.nom || 'Convive' }} - {{ alerte.niveau }}</option>
+    </select>
+    <select class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="utilisateurId" (change)="applyFilters()">
+      <option value="TOUT">Tous les utilisateurs</option>
+      <option *ngFor="let user of utilisateurs" [value]="user.id">{{ user.username }} ({{ user.role }})</option>
+    </select>
+    <input type="date" class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="dateFrom" (change)="applyFilters()" />
+    <input type="date" class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="dateTo" (change)="applyFilters()" />
+  </div>
+  <div class="flex">
+    <button type="button" class="mt-2 rounded-full border border-stroke px-4 py-2 text-sm font-semibold" (click)="resetFilters()">Reinitialiser filtres</button>
+  </div>
+</form>
+
+<div class="mt-6 grid gap-4">
+  <div *ngFor="let item of filtered" class="rounded-2xl border border-stroke bg-card p-5 shadow-soft">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-xs text-muted">{{ item.date | date:'short' }}</p>
+        <h3 class="app-title text-lg font-semibold">{{ item.typeAction }}</h3>
+        <p class="text-sm text-muted">{{ item.description || '-' }}</p>
+      </div>
+      <div class="text-right text-xs text-muted">
+        <p>Alerte: {{ item.alerte?.nom || '-' }}</p>
+        <p>Convive: {{ item.convive?.nom || '-' }} (ID {{ item.convive?.id || '-' }})</p>
+        <p>Utilisateur: {{ item.utilisateur?.username || '-' }}</p>
+      </div>
+    </div>
+    <div class="mt-4 flex items-center gap-3 text-xs font-semibold">
+      <button class="text-accent2" (click)="startEdit(item)">Modifier</button>
+      <button class="text-accent2" (click)="remove(item.id)">Supprimer</button>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --canvas: #F6F2EA;
+  --ink: #1C1B19;
+  --muted: #6B665E;
+  --card: #FFFFFF;
+  --stroke: #E3DDD2;
+  --accent: #2C6E49;
+  --accent2: #B85C38;
+  --night: #102A24;
+  --font-display: 'Space Grotesk', ui-sans-serif, system-ui;
+  --font-body: 'IBM Plex Sans', ui-sans-serif, system-ui;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(44, 110, 73, 0.12), transparent 60%),
+    radial-gradient(800px 500px at 100% 0%, rgba(184, 92, 56, 0.14), transparent 55%),
+    var(--canvas);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-title {
+  font-family: var(--font-display);
+}

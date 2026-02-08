@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.23.xsd">
 
-    <changeSet id="001-init" author="codex">
+    <changeSet id="001-init" author="youssefboubakri">
         <createTable tableName="site_restauration">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -225,4 +225,5 @@
                                  referencedTableName="allergene" referencedColumnNames="id"
                                  constraintName="fk_alerte_allergene_allergene"/>
     </changeSet>
+
 </databaseChangeLog>

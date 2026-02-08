@@ -1,5 +1,8 @@
 package com.example.repas_sur_backend.service;
 
+import com.example.repas_sur_backend.dto.SiteRestaurationDto;
+import com.example.repas_sur_backend.dto.SiteRestaurationRequest;
+import com.example.repas_sur_backend.exception.NotFoundException;
 import com.example.repas_sur_backend.model.SiteRestauration;
 import com.example.repas_sur_backend.repository.SiteRestaurationRepository;
 import java.util.List;
@@ -17,27 +20,48 @@ public class SiteRestaurationService {
     }
 
     @Transactional(readOnly = true)
-    public List<SiteRestauration> findAll() {
-        return siteRestaurationRepository.findAll();
+    public List<SiteRestaurationDto> findAll() {
+        return siteRestaurationRepository.findAll().stream().map(this::toDto).toList();
     }
 
     @Transactional(readOnly = true)
-    public SiteRestauration getById(Long id) {
-        return siteRestaurationRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("SiteRestauration not found: " + id));
+    public SiteRestaurationDto getById(Long id) {
+        return toDto(findEntity(id));
     }
 
-    public SiteRestauration save(SiteRestauration siteRestauration) {
-        return siteRestaurationRepository.save(siteRestauration);
+    public SiteRestaurationDto save(SiteRestaurationRequest request) {
+        SiteRestauration site = new SiteRestauration();
+        apply(site, request);
+        return toDto(siteRestaurationRepository.save(site));
     }
 
-    public SiteRestauration update(Long id, SiteRestauration siteRestauration) {
-        getById(id);
-        siteRestauration.setId(id);
-        return siteRestaurationRepository.save(siteRestauration);
+    public SiteRestaurationDto update(Long id, SiteRestaurationRequest request) {
+        SiteRestauration site = findEntity(id);
+        apply(site, request);
+        return toDto(siteRestaurationRepository.save(site));
     }
 
     public void delete(Long id) {
         siteRestaurationRepository.deleteById(id);
+    }
+
+    private SiteRestauration findEntity(Long id) {
+        return siteRestaurationRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("Site not found: " + id));
+    }
+
+    private void apply(SiteRestauration site, SiteRestaurationRequest request) {
+        site.setNom(request.nom());
+        site.setType(request.type());
+        site.setAdresse(request.adresse());
+    }
+
+    private SiteRestaurationDto toDto(SiteRestauration site) {
+        return new SiteRestaurationDto(
+            site.getId(),
+            site.getNom(),
+            site.getType(),
+            site.getAdresse()
+        );
     }
 }

@@ -1,0 +1,58 @@
+<div class="flex items-center justify-between">
+  <div>
+    <h2 class="app-title text-2xl font-semibold">Alertes</h2>
+    <p class="text-sm text-muted">Suivi des incompatibilites detectees</p>
+  </div>
+</div>
+
+<form class="mt-6 grid gap-4 rounded-3xl border border-stroke bg-card p-6 shadow-soft" [formGroup]="form" (ngSubmit)="generer()">
+  <div class="grid gap-4 md:grid-cols-3">
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="serviceId">
+      <option *ngFor="let s of services" [value]="s.id">{{ s.dateService | date:'short' }} - {{ s.menu?.nom || 'Sans menu' }}</option>
+    </select>
+    <button type="submit" class="rounded-full bg-night px-4 py-2 text-sm font-semibold text-white">Generer alertes</button>
+  </div>
+</form>
+
+<form class="mt-4 grid gap-4 rounded-3xl border border-stroke bg-white/70 p-4 shadow-soft" [formGroup]="filterForm" (ngSubmit)="$event.preventDefault()">
+  <div class="grid gap-4 md:grid-cols-4">
+    <select class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="etat" (change)="applyFilters()">
+      <option value="TOUT">Tous les etats</option>
+      <option value="NOUVELLE">NOUVELLE</option>
+      <option value="EN_COURS">EN_COURS</option>
+      <option value="RESOLUE">RESOLUE</option>
+    </select>
+    <select class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="niveau" (change)="applyFilters()">
+      <option value="TOUT">Tous les niveaux</option>
+      <option value="FAIBLE">FAIBLE</option>
+      <option value="MOYEN">MOYEN</option>
+      <option value="FORT">FORT</option>
+    </select>
+    <input type="date" class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="dateFrom" (change)="applyFilters()" />
+    <input type="date" class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="dateTo" (change)="applyFilters()" />
+  </div>
+  <div class="flex">
+    <button type="button" class="mt-2 rounded-full border border-stroke px-4 py-2 text-sm font-semibold" (click)="resetFilters()">Reinitialiser filtres</button>
+  </div>
+</form>
+
+<div class="mt-6 grid gap-4">
+  <div *ngFor="let item of filtered" class="rounded-2xl border border-stroke bg-card p-5 shadow-soft">
+    <div class="flex items-center justify-between">
+      <h3 class="app-title text-lg font-semibold">{{ item.convive?.nom || 'Convive' }}</h3>
+      <span class="rounded-full bg-accent2 text-white px-3 py-1 text-xs">{{ item.niveau }}</span>
+    </div>
+    <p class="mt-2 text-sm text-muted">{{ item.message || '-' }}</p>
+    <div class="mt-4 flex flex-wrap items-center gap-2">
+      <span class="text-xs text-muted">Etat:</span>
+      <select class="rounded-full border border-stroke px-3 py-1 text-xs" (change)="updateEtat(item.id, $any($event.target).value)">
+        <option [selected]="item.etat === 'NOUVELLE'" value="NOUVELLE">NOUVELLE</option>
+        <option [selected]="item.etat === 'EN_COURS'" value="EN_COURS">EN_COURS</option>
+        <option [selected]="item.etat === 'RESOLUE'" value="RESOLUE">RESOLUE</option>
+      </select>
+      <button type="button" class="rounded-full border border-stroke px-3 py-1 text-xs font-semibold" (click)="goToAction(item.id)">
+        Ajouter action corrective
+      </button>
+    </div>
+  </div>
+</div>

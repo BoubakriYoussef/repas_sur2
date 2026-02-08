@@ -1,0 +1,82 @@
+<div class="grid gap-6 lg:grid-cols-2">
+  <section class="rounded-3xl border border-stroke bg-card p-6 shadow-soft">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="app-title text-xl font-semibold">Sites de restauration</h2>
+        <p class="text-sm text-muted">Etablissements a superviser</p>
+      </div>
+    </div>
+
+    <form class="mt-4 grid gap-3" [formGroup]="siteForm" (ngSubmit)="createSite()">
+      <input class="w-full rounded-xl border border-stroke px-4 py-2" placeholder="Nom" formControlName="nom" />
+      <select class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="type">
+        <option value="SCOLAIRE">SCOLAIRE</option>
+        <option value="EHPAD">EHPAD</option>
+        <option value="ENTREPRISE">ENTREPRISE</option>
+      </select>
+      <input class="w-full rounded-xl border border-stroke px-4 py-2" placeholder="Adresse" formControlName="adresse" />
+      <div class="flex flex-wrap gap-3">
+        <button type="submit" class="w-fit rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white">
+          {{ editingSiteId ? 'Mettre a jour' : 'Ajouter site' }}
+        </button>
+        <button type="button" class="w-fit rounded-full border border-stroke px-4 py-2 text-sm font-semibold" (click)="cancelSiteEdit()" *ngIf="editingSiteId">Annuler</button>
+      </div>
+    </form>
+
+    <div class="mt-4 grid gap-3">
+      <div *ngFor="let site of sites" class="rounded-2xl border border-stroke p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs text-muted">{{ site.type }}</p>
+            <p class="font-semibold">{{ site.nom }}</p>
+            <p class="text-xs text-muted">{{ site.adresse || '-' }}</p>
+          </div>
+          <div class="flex items-center gap-3 text-xs font-semibold">
+            <button class="text-accent2" (click)="startEditSite(site)">Modifier</button>
+            <button class="text-accent2" (click)="removeSite(site.id)">Supprimer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rounded-3xl border border-stroke bg-card p-6 shadow-soft">
+    <div>
+      <h2 class="app-title text-xl font-semibold">Regimes alimentaires</h2>
+      <p class="text-sm text-muted">Contraintes nutritionnelles a respecter</p>
+    </div>
+
+    <form class="mt-4 grid gap-3" [formGroup]="regimeForm" (ngSubmit)="createRegime()">
+      <input class="w-full rounded-xl border border-stroke px-4 py-2" placeholder="Code" formControlName="code" />
+      <input class="w-full rounded-xl border border-stroke px-4 py-2" placeholder="Libelle" formControlName="libelle" />
+      <select class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="type">
+        <option value="ALIMENTAIRE">ALIMENTAIRE</option>
+        <option value="RELIGIEUX">RELIGIEUX</option>
+        <option value="MEDICAL">MEDICAL</option>
+      </select>
+      <input class="w-full rounded-xl border border-stroke px-4 py-2" placeholder="Description" formControlName="description" />
+      <div class="flex flex-wrap gap-3">
+        <button type="submit" class="w-fit rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white">
+          {{ editingRegimeId ? 'Mettre a jour' : 'Ajouter regime' }}
+        </button>
+        <button type="button" class="w-fit rounded-full border border-stroke px-4 py-2 text-sm font-semibold" (click)="cancelRegimeEdit()" *ngIf="editingRegimeId">Annuler</button>
+      </div>
+    </form>
+
+    <div class="mt-4 grid gap-3">
+      <div *ngFor="let regime of regimes" class="rounded-2xl border border-stroke p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs text-muted">{{ regime.code }}</p>
+            <p class="font-semibold">{{ regime.libelle }}</p>
+            <p class="text-xs text-muted">{{ regime.description || '-' }}</p>
+          </div>
+          <div class="flex items-center gap-3 text-xs font-semibold">
+            <button class="text-accent2" (click)="startEditRegime(regime)">Modifier</button>
+            <button class="text-accent2" (click)="removeRegime(regime.id)">Supprimer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

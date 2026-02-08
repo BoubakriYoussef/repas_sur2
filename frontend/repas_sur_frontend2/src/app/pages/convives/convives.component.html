@@ -1,0 +1,83 @@
+<div class="flex items-center justify-between">
+  <div>
+    <h2 class="app-title text-2xl font-semibold">Convives</h2>
+    <p class="text-sm text-muted">Suivi des profils allergiques</p>
+  </div>
+</div>
+
+<form class="mt-6 grid gap-4 rounded-3xl border border-stroke bg-card p-6 shadow-soft" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="grid gap-4 md:grid-cols-4">
+    <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Nom" formControlName="nom" />
+    <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Prenom" formControlName="prenom" />
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="typeConvive">
+      <option value="ENFANT_SCOLAIRE">ENFANT_SCOLAIRE</option>
+      <option value="ADOLESCENT_SCOLAIRE">ADOLESCENT_SCOLAIRE</option>
+      <option value="ETUDIANT">ETUDIANT</option>
+      <option value="RESIDENT_EHPAD">RESIDENT_EHPAD</option>
+      <option value="PATIENT_HOSPITALISE">PATIENT_HOSPITALISE</option>
+      <option value="SALARIE_ENTREPRISE">SALARIE_ENTREPRISE</option>
+      <option value="PERSONNEL_ETABLISSEMENT">PERSONNEL_ETABLISSEMENT</option>
+      <option value="ADULTE_EXTERNE">ADULTE_EXTERNE</option>
+      <option value="AUTRE">AUTRE</option>
+    </select>
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="siteId">
+      <option *ngFor="let site of sites" [value]="site.id">{{ site.nom }}</option>
+    </select>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-2">
+    <div class="rounded-2xl border border-stroke p-4">
+      <p class="text-xs uppercase tracking-[0.2em] text-muted">Allergenes</p>
+      <div class="mt-3 grid gap-2">
+        <label *ngFor="let a of allergenes" class="flex items-center gap-2 text-sm">
+          <input type="checkbox" [checked]="isAllergeneSelected(a.id)" (change)="toggleAllergene(a.id, $event.target.checked)" />
+          <span>{{ a.libelle }}</span>
+        </label>
+      </div>
+    </div>
+    <div class="rounded-2xl border border-stroke p-4">
+      <p class="text-xs uppercase tracking-[0.2em] text-muted">Regimes</p>
+      <div class="mt-3 grid gap-2">
+        <label *ngFor="let r of regimes" class="flex items-center gap-2 text-sm">
+          <input type="checkbox" [checked]="isRegimeSelected(r.id)" (change)="toggleRegime(r.id, $event.target.checked)" />
+          <span>{{ r.libelle }}</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-3">
+    <button type="submit" class="w-fit rounded-full bg-accent px-5 py-2 text-sm font-semibold text-white">
+      {{ editingId ? 'Mettre a jour' : 'Ajouter convive' }}
+    </button>
+    <button type="button" class="w-fit rounded-full border border-stroke px-5 py-2 text-sm font-semibold" (click)="cancelEdit()" *ngIf="editingId">Annuler</button>
+  </div>
+</form>
+
+<div class="mt-6 overflow-hidden rounded-3xl border border-stroke bg-card">
+  <table class="w-full text-left text-sm">
+    <thead class="bg-stroke/30 text-xs uppercase tracking-[0.2em] text-muted">
+      <tr>
+        <th class="px-6 py-4">Convive</th>
+        <th class="px-6 py-4">Regime</th>
+        <th class="px-6 py-4">Allergenes</th>
+        <th class="px-6 py-4">Site</th>
+        <th class="px-6 py-4">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of rows" class="border-t border-stroke">
+        <td class="px-6 py-4 font-semibold">{{ row.prenom }} {{ row.nom }}</td>
+        <td class="px-6 py-4">{{ formatRegimes(row) }}</td>
+        <td class="px-6 py-4">{{ formatAllergenes(row) }}</td>
+        <td class="px-6 py-4">{{ row.site?.nom || '-' }}</td>
+        <td class="px-6 py-4">
+          <div class="flex items-center gap-3 text-xs font-semibold">
+            <button class="text-accent2" (click)="startEdit(row)">Modifier</button>
+            <button class="text-accent2" (click)="remove(row.id)">Supprimer</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

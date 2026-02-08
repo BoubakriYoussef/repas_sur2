@@ -1,5 +1,8 @@
 package com.example.repas_sur_backend.service;
 
+import com.example.repas_sur_backend.dto.RegimeDto;
+import com.example.repas_sur_backend.dto.RegimeRequest;
+import com.example.repas_sur_backend.exception.NotFoundException;
 import com.example.repas_sur_backend.model.Regime;
 import com.example.repas_sur_backend.repository.RegimeRepository;
 import java.util.List;
@@ -17,27 +20,50 @@ public class RegimeService {
     }
 
     @Transactional(readOnly = true)
-    public List<Regime> findAll() {
-        return regimeRepository.findAll();
+    public List<RegimeDto> findAll() {
+        return regimeRepository.findAll().stream().map(this::toDto).toList();
     }
 
     @Transactional(readOnly = true)
-    public Regime getById(Long id) {
-        return regimeRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Regime not found: " + id));
+    public RegimeDto getById(Long id) {
+        return toDto(findEntity(id));
     }
 
-    public Regime save(Regime regime) {
-        return regimeRepository.save(regime);
+    public RegimeDto save(RegimeRequest request) {
+        Regime regime = new Regime();
+        apply(regime, request);
+        return toDto(regimeRepository.save(regime));
     }
 
-    public Regime update(Long id, Regime regime) {
-        getById(id);
-        regime.setId(id);
-        return regimeRepository.save(regime);
+    public RegimeDto update(Long id, RegimeRequest request) {
+        Regime regime = findEntity(id);
+        apply(regime, request);
+        return toDto(regimeRepository.save(regime));
     }
 
     public void delete(Long id) {
         regimeRepository.deleteById(id);
+    }
+
+    private Regime findEntity(Long id) {
+        return regimeRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("Regime not found: " + id));
+    }
+
+    private void apply(Regime regime, RegimeRequest request) {
+        regime.setCode(request.code());
+        regime.setLibelle(request.libelle());
+        regime.setType(request.type());
+        regime.setDescription(request.description());
+    }
+
+    private RegimeDto toDto(Regime regime) {
+        return new RegimeDto(
+            regime.getId(),
+            regime.getCode(),
+            regime.getLibelle(),
+            regime.getType(),
+            regime.getDescription()
+        );
     }
 }

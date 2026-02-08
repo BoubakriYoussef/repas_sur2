@@ -1,0 +1,93 @@
+<div class="flex items-center justify-between">
+  <div>
+    <h2 class="app-title text-2xl font-semibold">Utilisateurs</h2>
+    <p class="text-sm text-muted">Gestion des comptes et roles</p>
+  </div>
+</div>
+
+<form class="mt-6 grid gap-4 rounded-3xl border border-stroke bg-card p-6 shadow-soft" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="grid gap-4 md:grid-cols-3">
+    <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Nom utilisateur" formControlName="username" />
+    <input type="password" class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Mot de passe" formControlName="password" />
+    <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Email" formControlName="email" />
+  </div>
+  <div class="grid gap-4 md:grid-cols-3">
+    <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Telephone" formControlName="telephone" />
+    <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Poste" formControlName="poste" />
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="role">
+      <option value="ADMIN">ADMIN</option>
+      <option value="RESPONSABLE">RESPONSABLE</option>
+      <option value="CUISINE">CUISINE</option>
+    </select>
+  </div>
+  <div class="grid gap-4 md:grid-cols-3">
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="siteId">
+      <option [ngValue]="null">Sans site</option>
+      <option *ngFor="let site of sites" [ngValue]="site.id">{{ site.nom }}</option>
+    </select>
+    <label class="flex items-center gap-2 text-sm">
+      <input type="checkbox" formControlName="actif" />
+      <span>Actif</span>
+    </label>
+  </div>
+  <div class="flex flex-wrap gap-3">
+    <button type="submit" class="w-fit rounded-full bg-accent px-5 py-2 text-sm font-semibold text-white">
+      {{ editingId ? 'Mettre a jour' : 'Ajouter utilisateur' }}
+    </button>
+    <button type="button" class="w-fit rounded-full border border-stroke px-5 py-2 text-sm font-semibold" (click)="cancelEdit()" *ngIf="editingId">Annuler</button>
+  </div>
+</form>
+
+<form class="mt-4 grid gap-4 rounded-3xl border border-stroke bg-white/70 p-4 shadow-soft" [formGroup]="filterForm" (ngSubmit)="$event.preventDefault()">
+  <div class="grid gap-4 md:grid-cols-3">
+    <select class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="role" (change)="applyFilters()">
+      <option value="TOUT">Tous les roles</option>
+      <option value="ADMIN">ADMIN</option>
+      <option value="RESPONSABLE">RESPONSABLE</option>
+      <option value="CUISINE">CUISINE</option>
+    </select>
+    <select class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="actif" (change)="applyFilters()">
+      <option value="TOUT">Tous les statuts</option>
+      <option value="ACTIF">Actif</option>
+      <option value="INACTIF">Inactif</option>
+    </select>
+  </div>
+  <div class="flex">
+    <button type="button" class="mt-2 rounded-full border border-stroke px-4 py-2 text-sm font-semibold" (click)="resetFilters()">Reinitialiser filtres</button>
+  </div>
+</form>
+
+<div class="mt-6 overflow-hidden rounded-3xl border border-stroke bg-card">
+  <table class="w-full text-left text-sm">
+    <thead class="bg-stroke/30 text-xs uppercase tracking-[0.2em] text-muted">
+      <tr>
+        <th class="px-6 py-4">Utilisateur</th>
+        <th class="px-6 py-4">Role</th>
+        <th class="px-6 py-4">Contact</th>
+        <th class="px-6 py-4">Site</th>
+        <th class="px-6 py-4">Statut</th>
+        <th class="px-6 py-4">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of filtered" class="border-t border-stroke">
+        <td class="px-6 py-4 font-semibold">{{ user.username }}</td>
+        <td class="px-6 py-4">{{ user.role }}</td>
+        <td class="px-6 py-4">
+          <div class="text-xs text-muted">{{ user.email || '-' }}</div>
+          <div class="text-xs text-muted">{{ user.telephone || '-' }}</div>
+        </td>
+        <td class="px-6 py-4">{{ user.site?.nom || '-' }}</td>
+        <td class="px-6 py-4">
+          <span class="rounded-full border border-stroke px-3 py-1 text-xs">{{ user.actif ? 'Actif' : 'Inactif' }}</span>
+        </td>
+        <td class="px-6 py-4">
+          <div class="flex items-center gap-3 text-xs font-semibold">
+            <button class="text-accent2" (click)="startEdit(user)">Modifier</button>
+            <button class="text-accent2" (click)="remove(user.id)">Supprimer</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

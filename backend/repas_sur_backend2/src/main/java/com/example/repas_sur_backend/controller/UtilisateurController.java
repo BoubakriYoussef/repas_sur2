@@ -1,10 +1,13 @@
 package com.example.repas_sur_backend.controller;
 
-import com.example.repas_sur_backend.model.Utilisateur;
+import com.example.repas_sur_backend.dto.UtilisateurDto;
+import com.example.repas_sur_backend.dto.UtilisateurRequest;
 import com.example.repas_sur_backend.service.UtilisateurService;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,27 +28,32 @@ public class UtilisateurController {
     }
 
     @GetMapping
-    public List<Utilisateur> getAll() {
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<UtilisateurDto> getAll() {
         return utilisateurService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Utilisateur getById(@PathVariable Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public UtilisateurDto getById(@PathVariable Long id) {
         return utilisateurService.getById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Utilisateur> create(@RequestBody Utilisateur utilisateur) {
-        Utilisateur created = utilisateurService.save(utilisateur);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UtilisateurDto> create(@Valid @RequestBody UtilisateurRequest request) {
+        UtilisateurDto created = utilisateurService.save(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public Utilisateur update(@PathVariable Long id, @RequestBody Utilisateur utilisateur) {
-        return utilisateurService.update(id, utilisateur);
+    @PreAuthorize("hasRole('ADMIN')")
+    public UtilisateurDto update(@PathVariable Long id, @Valid @RequestBody UtilisateurRequest request) {
+        return utilisateurService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         utilisateurService.delete(id);
         return ResponseEntity.noContent().build();

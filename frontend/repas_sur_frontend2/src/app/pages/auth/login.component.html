@@ -1,0 +1,18 @@
+<div class="min-h-screen flex items-center justify-center px-6">
+  <div class="w-full max-w-md rounded-3xl border border-stroke bg-card p-8 shadow-soft">
+    <h2 class="app-title text-2xl font-semibold">Connexion</h2>
+    <p class="text-sm text-muted">Acces aux operations SafeMeal</p>
+
+    <form class="mt-6 grid gap-4" [formGroup]="form" (ngSubmit)="submit()">
+      <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Identifiant" formControlName="username" />
+      <input class="w-full rounded-xl border border-stroke px-4 py-3" type="password" placeholder="Mot de passe" formControlName="password" />
+
+      <p *ngIf="error" class="rounded-xl border border-accent2/40 bg-accent2/10 px-4 py-3 text-sm text-accent2">{{ error }}</p>
+
+      <button type="submit" [disabled]="isLoading" class="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">
+        {{ isLoading ? 'Connexion...' : 'Se connecter' }}
+      </button>
+      <a routerLink="/register" class="text-sm text-muted">Creer un compte</a>
+    </form>
+  </div>
+</div>

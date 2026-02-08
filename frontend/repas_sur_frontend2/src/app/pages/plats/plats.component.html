@@ -1,0 +1,58 @@
+<div class="flex items-center justify-between">
+  <div>
+    <h2 class="app-title text-2xl font-semibold">Plats</h2>
+    <p class="text-sm text-muted">Catalogue des plats et allergenes</p>
+  </div>
+</div>
+
+<form class="mt-6 grid gap-4 rounded-3xl border border-stroke bg-card p-6 shadow-soft" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="grid gap-4 md:grid-cols-3">
+    <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Nom" formControlName="nom" />
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="categorie">
+      <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+    </select>
+    <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Description" formControlName="description" />
+  </div>
+
+  <div class="flex flex-wrap gap-6">
+    <label class="flex items-center gap-2 text-sm">
+      <input type="checkbox" formControlName="contientPorc" />
+      <span>Contient porc</span>
+    </label>
+    <label class="flex items-center gap-2 text-sm">
+      <input type="checkbox" formControlName="estVegetarien" />
+      <span>Vegetarien</span>
+    </label>
+  </div>
+
+  <div class="rounded-2xl border border-stroke p-4">
+    <p class="text-xs uppercase tracking-[0.2em] text-muted">Allergenes</p>
+    <div class="mt-3 grid gap-2 md:grid-cols-2">
+      <label *ngFor="let a of allergenes" class="flex items-center gap-2 text-sm">
+        <input type="checkbox" [checked]="isAllergeneSelected(a.id)" (change)="toggleAllergene(a.id, $event.target.checked)" />
+        <span>{{ a.libelle }}</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-3">
+    <button type="submit" class="w-fit rounded-full bg-accent px-5 py-2 text-sm font-semibold text-white">
+      {{ editingId ? 'Mettre a jour' : 'Ajouter plat' }}
+    </button>
+    <button type="button" class="w-fit rounded-full border border-stroke px-5 py-2 text-sm font-semibold" (click)="cancelEdit()" *ngIf="editingId">Annuler</button>
+  </div>
+</form>
+
+<div class="mt-6 grid gap-4 md:grid-cols-2">
+  <div *ngFor="let item of plats" class="rounded-2xl border border-stroke bg-card p-5 shadow-soft">
+    <div class="flex items-center justify-between">
+      <h3 class="app-title text-lg font-semibold">{{ item.nom }}</h3>
+      <span class="rounded-full border border-stroke px-3 py-1 text-xs">{{ item.categorie || '-' }}</span>
+    </div>
+    <p class="mt-3 text-sm text-muted">Allergenes: {{ formatAllergenes(item) }}</p>
+    <div class="mt-4 flex items-center gap-3 text-xs font-semibold">
+      <button class="text-accent2" (click)="startEdit(item)">Modifier</button>
+      <button class="text-accent2" (click)="remove(item.id)">Supprimer</button>
+    </div>
+  </div>
+</div>

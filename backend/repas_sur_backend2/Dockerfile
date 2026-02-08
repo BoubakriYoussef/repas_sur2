@@ -1,13 +1,14 @@
+# syntax=docker/dockerfile:1.6
 FROM maven:3.9.6-eclipse-temurin-21 AS build
 
 WORKDIR /app
 
 COPY pom.xml mvnw ./
 COPY .mvn .mvn
-RUN ./mvnw -q -DskipTests dependency:go-offline
+RUN --mount=type=cache,target=/root/.m2 ./mvnw -q -DskipTests dependency:go-offline
 
 COPY src src
-RUN ./mvnw -DskipTests package
+RUN --mount=type=cache,target=/root/.m2 ./mvnw -DskipTests -Dmaven.test.skip=true package
 
 FROM eclipse-temurin:21-jre
 

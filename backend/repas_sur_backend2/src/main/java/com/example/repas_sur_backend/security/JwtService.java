@@ -29,8 +29,8 @@ public class JwtService {
     public String generateToken(String username, Map<String, Object> claims) {
         Instant now = Instant.now();
         return Jwts.builder()
-            .setSubject(username)
             .setClaims(claims)
+            .setSubject(username)
             .setIssuedAt(Date.from(now))
             .setExpiration(Date.from(now.plusMillis(expirationMs)))
             .signWith(signingKey, SignatureAlgorithm.HS256)

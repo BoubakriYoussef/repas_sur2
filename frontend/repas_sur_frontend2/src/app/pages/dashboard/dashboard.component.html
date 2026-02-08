@@ -1,0 +1,46 @@
+<section class="grid gap-5 lg:grid-cols-4">
+  <div *ngFor="let stat of stats" class="rounded-2xl border border-stroke bg-card p-5 shadow-soft">
+    <p class="text-xs uppercase tracking-[0.2em] text-muted">{{ stat.label }}</p>
+    <div class="mt-4 flex items-end justify-between">
+      <h2 class="app-title text-3xl font-semibold">{{ stat.value }}</h2>
+      <span class="text-xs font-semibold text-accent">{{ stat.trend }}</span>
+    </div>
+  </div>
+</section>
+
+<section class="mt-10 grid gap-6 lg:grid-cols-3">
+  <div class="lg:col-span-2 rounded-3xl border border-stroke bg-white/80 p-6 shadow-soft">
+    <div class="flex items-center justify-between">
+      <h3 class="app-title text-lg font-semibold">Planning a venir</h3>
+      <span class="text-xs text-muted">Prochains services</span>
+    </div>
+    <div class="mt-6 grid gap-4 md:grid-cols-2">
+      <div *ngFor="let service of nextServices" class="rounded-2xl border border-stroke p-4">
+        <p class="text-xs text-muted">{{ service.dateService | date:'EEE dd/MM' }}</p>
+        <p class="mt-2 text-sm font-semibold">{{ service.menu?.nom || 'Sans menu' }}</p>
+        <p class="text-xs text-muted">Site: {{ service.site?.nom || '-' }}</p>
+      </div>
+      <div *ngIf="nextServices.length === 0" class="rounded-2xl border border-stroke p-4">
+        <p class="text-xs text-muted">Aucun service planifie</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="rounded-3xl border border-stroke bg-night text-white p-6 shadow-lift">
+    <div class="flex items-center justify-between">
+      <h3 class="app-title text-lg font-semibold">Alertes critiques</h3>
+      <span class="text-xs text-white/60">{{ criticalAlerts.length }} actives</span>
+    </div>
+    <div class="mt-6 space-y-4">
+      <div *ngFor="let alert of criticalAlerts" class="rounded-2xl border border-white/10 bg-white/5 p-4">
+        <p class="text-sm font-semibold">{{ alert.convive?.nom || 'Convive' }}</p>
+        <p class="text-xs text-white/60">{{ alert.message || '-' }}</p>
+        <span class="mt-3 inline-flex rounded-full bg-accent2/80 px-2 py-1 text-xs">{{ alert.niveau }}</span>
+      </div>
+      <div *ngIf="criticalAlerts.length === 0" class="rounded-2xl border border-white/10 bg-white/5 p-4">
+        <p class="text-sm font-semibold">Aucune alerte</p>
+        <p class="text-xs text-white/60">Tout est sous controle</p>
+      </div>
+    </div>
+  </div>
+</section>

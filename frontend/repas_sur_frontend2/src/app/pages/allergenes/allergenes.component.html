@@ -1,0 +1,30 @@
+<div class="flex flex-col gap-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="app-title text-2xl font-semibold">Allergenes</h2>
+      <p class="text-sm text-muted">Referentiel central des risques</p>
+    </div>
+  </div>
+
+  <form class="grid gap-3 rounded-2xl border border-stroke bg-card p-5 shadow-soft md:grid-cols-5" [formGroup]="form" (ngSubmit)="submit()">
+    <input class="w-full rounded-xl border border-stroke px-4 py-2" placeholder="Code" formControlName="code" />
+    <input class="w-full rounded-xl border border-stroke px-4 py-2" placeholder="Libelle" formControlName="libelle" />
+    <input class="w-full rounded-xl border border-stroke px-4 py-2 md:col-span-2" placeholder="Description" formControlName="description" />
+    <button type="submit" class="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white">
+      {{ editingId ? 'Mettre a jour' : 'Ajouter' }}
+    </button>
+    <button type="button" class="rounded-full border border-stroke px-4 py-2 text-sm font-semibold" (click)="cancelEdit()" *ngIf="editingId">Annuler</button>
+  </form>
+
+  <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div *ngFor="let item of allergenes" class="rounded-2xl border border-stroke bg-card p-5 shadow-soft">
+      <p class="text-xs text-muted">{{ item.code }}</p>
+      <h3 class="app-title text-lg font-semibold">{{ item.libelle }}</h3>
+      <p class="text-sm text-muted">{{ item.description || '-' }}</p>
+      <div class="mt-4 flex items-center gap-3 text-xs font-semibold">
+        <button class="text-accent2" (click)="startEdit(item)">Modifier</button>
+        <button class="text-accent2" (click)="remove(item.id)">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

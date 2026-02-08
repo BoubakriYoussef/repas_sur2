@@ -5,7 +5,12 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.23.xsd">
 
-    <changeSet id="001-init" author="youssefboubakri">
+    <changeSet id="001-site" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="site_restauration"/>
+            </not>
+        </preConditions>
         <createTable tableName="site_restauration">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -18,7 +23,14 @@
             </column>
             <column name="adresse" type="VARCHAR(255)"/>
         </createTable>
+    </changeSet>
 
+    <changeSet id="002-regime" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="regime"/>
+            </not>
+        </preConditions>
         <createTable tableName="regime">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -28,7 +40,14 @@
             <column name="type" type="VARCHAR(50)"/>
             <column name="description" type="VARCHAR(500)"/>
         </createTable>
+    </changeSet>
 
+    <changeSet id="003-allergene" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="allergene"/>
+            </not>
+        </preConditions>
         <createTable tableName="allergene">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -37,7 +56,14 @@
             <column name="libelle" type="VARCHAR(255)"/>
             <column name="description" type="VARCHAR(500)"/>
         </createTable>
+    </changeSet>
 
+    <changeSet id="004-plat" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="plat"/>
+            </not>
+        </preConditions>
         <createTable tableName="plat">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -48,7 +74,14 @@
             <column name="contient_porc" type="BOOLEAN"/>
             <column name="est_vegetarien" type="BOOLEAN"/>
         </createTable>
+    </changeSet>
 
+    <changeSet id="005-menu" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="menu"/>
+            </not>
+        </preConditions>
         <createTable tableName="menu">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -56,7 +89,14 @@
             <column name="nom" type="VARCHAR(255)"/>
             <column name="description" type="VARCHAR(500)"/>
         </createTable>
+    </changeSet>
 
+    <changeSet id="006-convive" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="convive"/>
+            </not>
+        </preConditions>
         <createTable tableName="convive">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -66,7 +106,14 @@
             <column name="type_convive" type="VARCHAR(50)"/>
             <column name="site_id" type="BIGINT"/>
         </createTable>
+    </changeSet>
 
+    <changeSet id="007-utilisateur" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="utilisateur"/>
+            </not>
+        </preConditions>
         <createTable tableName="utilisateur">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -80,7 +127,14 @@
             <column name="actif" type="BOOLEAN"/>
             <column name="site_id" type="BIGINT"/>
         </createTable>
+    </changeSet>
 
+    <changeSet id="008-service-repas" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="service_repas"/>
+            </not>
+        </preConditions>
         <createTable tableName="service_repas">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -91,7 +145,14 @@
             <column name="site_id" type="BIGINT"/>
             <column name="menu_id" type="BIGINT"/>
         </createTable>
+    </changeSet>
 
+    <changeSet id="009-alerte-risque" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="alerte_risque"/>
+            </not>
+        </preConditions>
         <createTable tableName="alerte_risque">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -103,7 +164,14 @@
             <column name="convive_id" type="BIGINT"/>
             <column name="service_id" type="BIGINT"/>
         </createTable>
+    </changeSet>
 
+    <changeSet id="010-action-corrective" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="action_corrective"/>
+            </not>
+        </preConditions>
         <createTable tableName="action_corrective">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -114,7 +182,14 @@
             <column name="alerte_id" type="BIGINT"/>
             <column name="utilisateur_id" type="BIGINT"/>
         </createTable>
+    </changeSet>
 
+    <changeSet id="011-convive-allergene" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="convive_allergene"/>
+            </not>
+        </preConditions>
         <createTable tableName="convive_allergene">
             <column name="convive_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -123,8 +198,23 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addPrimaryKey tableName="convive_allergene" columnNames="convive_id, allergene_id" constraintName="pk_convive_allergene"/>
+    </changeSet>
 
+    <changeSet id="012-convive-allergene-pk" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <primaryKeyExists tableName="convive_allergene" primaryKeyName="pk_convive_allergene"/>
+            </not>
+        </preConditions>
+        <addPrimaryKey tableName="convive_allergene" columnNames="convive_id, allergene_id" constraintName="pk_convive_allergene"/>
+    </changeSet>
+
+    <changeSet id="013-convive-regime" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="convive_regime"/>
+            </not>
+        </preConditions>
         <createTable tableName="convive_regime">
             <column name="convive_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -133,8 +223,23 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addPrimaryKey tableName="convive_regime" columnNames="convive_id, regime_id" constraintName="pk_convive_regime"/>
+    </changeSet>
 
+    <changeSet id="014-convive-regime-pk" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <primaryKeyExists tableName="convive_regime" primaryKeyName="pk_convive_regime"/>
+            </not>
+        </preConditions>
+        <addPrimaryKey tableName="convive_regime" columnNames="convive_id, regime_id" constraintName="pk_convive_regime"/>
+    </changeSet>
+
+    <changeSet id="015-plat-allergene" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="plat_allergene"/>
+            </not>
+        </preConditions>
         <createTable tableName="plat_allergene">
             <column name="plat_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -143,8 +248,23 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addPrimaryKey tableName="plat_allergene" columnNames="plat_id, allergene_id" constraintName="pk_plat_allergene"/>
+    </changeSet>
 
+    <changeSet id="016-plat-allergene-pk" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <primaryKeyExists tableName="plat_allergene" primaryKeyName="pk_plat_allergene"/>
+            </not>
+        </preConditions>
+        <addPrimaryKey tableName="plat_allergene" columnNames="plat_id, allergene_id" constraintName="pk_plat_allergene"/>
+    </changeSet>
+
+    <changeSet id="017-menu-plat" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="menu_plat"/>
+            </not>
+        </preConditions>
         <createTable tableName="menu_plat">
             <column name="menu_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -153,8 +273,23 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addPrimaryKey tableName="menu_plat" columnNames="menu_id, plat_id" constraintName="pk_menu_plat"/>
+    </changeSet>
 
+    <changeSet id="018-menu-plat-pk" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <primaryKeyExists tableName="menu_plat" primaryKeyName="pk_menu_plat"/>
+            </not>
+        </preConditions>
+        <addPrimaryKey tableName="menu_plat" columnNames="menu_id, plat_id" constraintName="pk_menu_plat"/>
+    </changeSet>
+
+    <changeSet id="019-alerte-allergene" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="alerte_allergene"/>
+            </not>
+        </preConditions>
         <createTable tableName="alerte_allergene">
             <column name="alerte_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -163,8 +298,23 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addPrimaryKey tableName="alerte_allergene" columnNames="alerte_id, allergene_id" constraintName="pk_alerte_allergene"/>
+    </changeSet>
 
+    <changeSet id="020-alerte-allergene-pk" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <primaryKeyExists tableName="alerte_allergene" primaryKeyName="pk_alerte_allergene"/>
+            </not>
+        </preConditions>
+        <addPrimaryKey tableName="alerte_allergene" columnNames="alerte_id, allergene_id" constraintName="pk_alerte_allergene"/>
+    </changeSet>
+
+    <changeSet id="021-foreign-keys" author="youssefboubakri">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="fk_convive_site"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseTableName="convive" baseColumnNames="site_id"
                                  referencedTableName="site_restauration" referencedColumnNames="id"
                                  constraintName="fk_convive_site"/>
@@ -189,35 +339,30 @@
         <addForeignKeyConstraint baseTableName="action_corrective" baseColumnNames="utilisateur_id"
                                  referencedTableName="utilisateur" referencedColumnNames="id"
                                  constraintName="fk_action_utilisateur"/>
-
         <addForeignKeyConstraint baseTableName="convive_allergene" baseColumnNames="convive_id"
                                  referencedTableName="convive" referencedColumnNames="id"
                                  constraintName="fk_convive_allergene_convive"/>
         <addForeignKeyConstraint baseTableName="convive_allergene" baseColumnNames="allergene_id"
                                  referencedTableName="allergene" referencedColumnNames="id"
                                  constraintName="fk_convive_allergene_allergene"/>
-
         <addForeignKeyConstraint baseTableName="convive_regime" baseColumnNames="convive_id"
                                  referencedTableName="convive" referencedColumnNames="id"
                                  constraintName="fk_convive_regime_convive"/>
         <addForeignKeyConstraint baseTableName="convive_regime" baseColumnNames="regime_id"
                                  referencedTableName="regime" referencedColumnNames="id"
                                  constraintName="fk_convive_regime_regime"/>
-
         <addForeignKeyConstraint baseTableName="plat_allergene" baseColumnNames="plat_id"
                                  referencedTableName="plat" referencedColumnNames="id"
                                  constraintName="fk_plat_allergene_plat"/>
         <addForeignKeyConstraint baseTableName="plat_allergene" baseColumnNames="allergene_id"
                                  referencedTableName="allergene" referencedColumnNames="id"
                                  constraintName="fk_plat_allergene_allergene"/>
-
         <addForeignKeyConstraint baseTableName="menu_plat" baseColumnNames="menu_id"
                                  referencedTableName="menu" referencedColumnNames="id"
                                  constraintName="fk_menu_plat_menu"/>
         <addForeignKeyConstraint baseTableName="menu_plat" baseColumnNames="plat_id"
                                  referencedTableName="plat" referencedColumnNames="id"
                                  constraintName="fk_menu_plat_plat"/>
-
         <addForeignKeyConstraint baseTableName="alerte_allergene" baseColumnNames="alerte_id"
                                  referencedTableName="alerte_risque" referencedColumnNames="id"
                                  constraintName="fk_alerte_allergene_alerte"/>
@@ -225,5 +370,4 @@
                                  referencedTableName="allergene" referencedColumnNames="id"
                                  constraintName="fk_alerte_allergene_allergene"/>
     </changeSet>
-
 </databaseChangeLog>

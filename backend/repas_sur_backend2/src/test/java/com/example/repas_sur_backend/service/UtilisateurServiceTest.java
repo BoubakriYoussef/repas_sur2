@@ -61,6 +61,8 @@ class UtilisateurServiceTest {
         );
 
         when(passwordEncoder.encode("secret")).thenReturn("encoded");
+        when(utilisateurRepository.save(org.mockito.ArgumentMatchers.any()))
+            .thenAnswer(invocation -> invocation.getArgument(0));
 
         utilisateurService.save(request);
 

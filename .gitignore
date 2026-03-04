@@ -1,7 +1,10 @@
 .env
 .env.*
+!.env.example
 package.json
 package-lock.json
+!frontend/repas_sur_frontend2/package.json
+!frontend/repas_sur_frontend2/package-lock.json
 .idea/
 .m2-local/
 **/node_modules/

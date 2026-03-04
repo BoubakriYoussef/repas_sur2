@@ -370,4 +370,373 @@
                                  referencedTableName="allergene" referencedColumnNames="id"
                                  constraintName="fk_alerte_allergene_allergene"/>
     </changeSet>
+
+    <changeSet id="022-seed-sites" author="youssefboubakri">
+        <sql>
+            INSERT INTO site_restauration (nom, type, adresse)
+            SELECT 'Ecole Primaire Horizon', 'SCOLAIRE', '12 rue des Acacias, Lyon'
+            WHERE NOT EXISTS (
+                SELECT 1 FROM site_restauration WHERE nom = 'Ecole Primaire Horizon'
+            );
+
+            INSERT INTO site_restauration (nom, type, adresse)
+            SELECT 'Residence Les Oliviers', 'EHPAD', '8 avenue du Parc, Villeurbanne'
+            WHERE NOT EXISTS (
+                SELECT 1 FROM site_restauration WHERE nom = 'Residence Les Oliviers'
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="023-seed-regimes" author="youssefboubakri">
+        <sql>
+            INSERT INTO regime (code, libelle, type, description)
+            SELECT 'STANDARD', 'Regime standard', 'STANDARD', 'Aucune restriction particuliere.'
+            WHERE NOT EXISTS (SELECT 1 FROM regime WHERE code = 'STANDARD');
+
+            INSERT INTO regime (code, libelle, type, description)
+            SELECT 'SANS_PORC', 'Sans porc', 'RELIGIEUX', 'Exclusion des produits contenant du porc.'
+            WHERE NOT EXISTS (SELECT 1 FROM regime WHERE code = 'SANS_PORC');
+
+            INSERT INTO regime (code, libelle, type, description)
+            SELECT 'VEGETARIEN', 'Vegetarien', 'ETHIQUE', 'Exclusion des viandes et poissons.'
+            WHERE NOT EXISTS (SELECT 1 FROM regime WHERE code = 'VEGETARIEN');
+
+            INSERT INTO regime (code, libelle, type, description)
+            SELECT 'SANS_GLUTEN', 'Sans gluten', 'MEDICAL', 'Eviction des cereales contenant du gluten.'
+            WHERE NOT EXISTS (SELECT 1 FROM regime WHERE code = 'SANS_GLUTEN');
+        </sql>
+    </changeSet>
+
+    <changeSet id="024-seed-allergenes" author="youssefboubakri">
+        <sql>
+            INSERT INTO allergene (code, libelle, description)
+            SELECT 'GLUTEN', 'Gluten', 'Cereales contenant du gluten.'
+            WHERE NOT EXISTS (SELECT 1 FROM allergene WHERE code = 'GLUTEN');
+
+            INSERT INTO allergene (code, libelle, description)
+            SELECT 'LAIT', 'Lait', 'Lait et produits laitiers.'
+            WHERE NOT EXISTS (SELECT 1 FROM allergene WHERE code = 'LAIT');
+
+            INSERT INTO allergene (code, libelle, description)
+            SELECT 'OEUF', 'Oeuf', 'Oeufs et derives.'
+            WHERE NOT EXISTS (SELECT 1 FROM allergene WHERE code = 'OEUF');
+
+            INSERT INTO allergene (code, libelle, description)
+            SELECT 'ARACHIDE', 'Arachide', 'Arachides et produits derives.'
+            WHERE NOT EXISTS (SELECT 1 FROM allergene WHERE code = 'ARACHIDE');
+
+            INSERT INTO allergene (code, libelle, description)
+            SELECT 'SOJA', 'Soja', 'Soja et produits a base de soja.'
+            WHERE NOT EXISTS (SELECT 1 FROM allergene WHERE code = 'SOJA');
+
+            INSERT INTO allergene (code, libelle, description)
+            SELECT 'POISSON', 'Poisson', 'Poissons et produits derives.'
+            WHERE NOT EXISTS (SELECT 1 FROM allergene WHERE code = 'POISSON');
+        </sql>
+    </changeSet>
+
+    <changeSet id="025-seed-plats-menus" author="youssefboubakri">
+        <sql>
+            INSERT INTO plat (nom, categorie, description, contient_porc, est_vegetarien)
+            SELECT 'Gratin de pates', 'PLAT', 'Gratin pates creme emmental.', false, true
+            WHERE NOT EXISTS (SELECT 1 FROM plat WHERE nom = 'Gratin de pates');
+
+            INSERT INTO plat (nom, categorie, description, contient_porc, est_vegetarien)
+            SELECT 'Emince de poulet', 'PLAT', 'Poulet sauce legere.', false, false
+            WHERE NOT EXISTS (SELECT 1 FROM plat WHERE nom = 'Emince de poulet');
+
+            INSERT INTO plat (nom, categorie, description, contient_porc, est_vegetarien)
+            SELECT 'Quiche lorraine', 'PLAT', 'Quiche avec lardons et creme.', true, false
+            WHERE NOT EXISTS (SELECT 1 FROM plat WHERE nom = 'Quiche lorraine');
+
+            INSERT INTO plat (nom, categorie, description, contient_porc, est_vegetarien)
+            SELECT 'Salade de lentilles', 'ENTREE', 'Lentilles, carottes, oignons.', false, true
+            WHERE NOT EXISTS (SELECT 1 FROM plat WHERE nom = 'Salade de lentilles');
+
+            INSERT INTO plat (nom, categorie, description, contient_porc, est_vegetarien)
+            SELECT 'Pave de saumon', 'PLAT', 'Saumon au four et herbes.', false, false
+            WHERE NOT EXISTS (SELECT 1 FROM plat WHERE nom = 'Pave de saumon');
+
+            INSERT INTO plat (nom, categorie, description, contient_porc, est_vegetarien)
+            SELECT 'Compote pomme-poire', 'DESSERT', 'Compote sans sucres ajoutes.', false, true
+            WHERE NOT EXISTS (SELECT 1 FROM plat WHERE nom = 'Compote pomme-poire');
+
+            INSERT INTO menu (nom, description)
+            SELECT 'Menu Scolaire Standard', 'Menu dejeuner scolaire varie.'
+            WHERE NOT EXISTS (SELECT 1 FROM menu WHERE nom = 'Menu Scolaire Standard');
+
+            INSERT INTO menu (nom, description)
+            SELECT 'Menu Vegetarien', 'Menu sans viande ni poisson.'
+            WHERE NOT EXISTS (SELECT 1 FROM menu WHERE nom = 'Menu Vegetarien');
+
+            INSERT INTO menu (nom, description)
+            SELECT 'Menu EHPAD Equilibre', 'Menu adapte a la restauration senior.'
+            WHERE NOT EXISTS (SELECT 1 FROM menu WHERE nom = 'Menu EHPAD Equilibre');
+        </sql>
+    </changeSet>
+
+    <changeSet id="026-seed-relations-plat-menu-allergene" author="youssefboubakri">
+        <sql>
+            INSERT INTO plat_allergene (plat_id, allergene_id)
+            SELECT p.id, a.id
+            FROM plat p, allergene a
+            WHERE p.nom = 'Gratin de pates' AND a.code IN ('GLUTEN', 'LAIT')
+              AND NOT EXISTS (
+                SELECT 1 FROM plat_allergene x WHERE x.plat_id = p.id AND x.allergene_id = a.id
+              );
+
+            INSERT INTO plat_allergene (plat_id, allergene_id)
+            SELECT p.id, a.id
+            FROM plat p, allergene a
+            WHERE p.nom = 'Quiche lorraine' AND a.code IN ('GLUTEN', 'LAIT', 'OEUF')
+              AND NOT EXISTS (
+                SELECT 1 FROM plat_allergene x WHERE x.plat_id = p.id AND x.allergene_id = a.id
+              );
+
+            INSERT INTO plat_allergene (plat_id, allergene_id)
+            SELECT p.id, a.id
+            FROM plat p, allergene a
+            WHERE p.nom = 'Pave de saumon' AND a.code IN ('POISSON')
+              AND NOT EXISTS (
+                SELECT 1 FROM plat_allergene x WHERE x.plat_id = p.id AND x.allergene_id = a.id
+              );
+
+            INSERT INTO menu_plat (menu_id, plat_id)
+            SELECT m.id, p.id
+            FROM menu m, plat p
+            WHERE m.nom = 'Menu Scolaire Standard'
+              AND p.nom IN ('Salade de lentilles', 'Emince de poulet', 'Gratin de pates', 'Compote pomme-poire')
+              AND NOT EXISTS (
+                SELECT 1 FROM menu_plat x WHERE x.menu_id = m.id AND x.plat_id = p.id
+              );
+
+            INSERT INTO menu_plat (menu_id, plat_id)
+            SELECT m.id, p.id
+            FROM menu m, plat p
+            WHERE m.nom = 'Menu Vegetarien'
+              AND p.nom IN ('Salade de lentilles', 'Gratin de pates', 'Compote pomme-poire')
+              AND NOT EXISTS (
+                SELECT 1 FROM menu_plat x WHERE x.menu_id = m.id AND x.plat_id = p.id
+              );
+
+            INSERT INTO menu_plat (menu_id, plat_id)
+            SELECT m.id, p.id
+            FROM menu m, plat p
+            WHERE m.nom = 'Menu EHPAD Equilibre'
+              AND p.nom IN ('Salade de lentilles', 'Pave de saumon', 'Compote pomme-poire')
+              AND NOT EXISTS (
+                SELECT 1 FROM menu_plat x WHERE x.menu_id = m.id AND x.plat_id = p.id
+              );
+        </sql>
+    </changeSet>
+
+    <changeSet id="027-seed-convives" author="youssefboubakri">
+        <sql>
+            INSERT INTO convive (nom, prenom, type_convive, site_id)
+            SELECT 'Martin', 'Lea', 'ENFANT_SCOLAIRE', s.id
+            FROM site_restauration s
+            WHERE s.nom = 'Ecole Primaire Horizon'
+              AND NOT EXISTS (
+                SELECT 1 FROM convive c WHERE c.nom = 'Martin' AND c.prenom = 'Lea'
+              );
+
+            INSERT INTO convive (nom, prenom, type_convive, site_id)
+            SELECT 'Benali', 'Yanis', 'ADOLESCENT_SCOLAIRE', s.id
+            FROM site_restauration s
+            WHERE s.nom = 'Ecole Primaire Horizon'
+              AND NOT EXISTS (
+                SELECT 1 FROM convive c WHERE c.nom = 'Benali' AND c.prenom = 'Yanis'
+              );
+
+            INSERT INTO convive (nom, prenom, type_convive, site_id)
+            SELECT 'Dupont', 'Emma', 'ENFANT_SCOLAIRE', s.id
+            FROM site_restauration s
+            WHERE s.nom = 'Ecole Primaire Horizon'
+              AND NOT EXISTS (
+                SELECT 1 FROM convive c WHERE c.nom = 'Dupont' AND c.prenom = 'Emma'
+              );
+
+            INSERT INTO convive (nom, prenom, type_convive, site_id)
+            SELECT 'Moreau', 'Henri', 'RESIDENT_EHPAD', s.id
+            FROM site_restauration s
+            WHERE s.nom = 'Residence Les Oliviers'
+              AND NOT EXISTS (
+                SELECT 1 FROM convive c WHERE c.nom = 'Moreau' AND c.prenom = 'Henri'
+              );
+
+            INSERT INTO convive (nom, prenom, type_convive, site_id)
+            SELECT 'Garcia', 'Nora', 'RESIDENT_EHPAD', s.id
+            FROM site_restauration s
+            WHERE s.nom = 'Residence Les Oliviers'
+              AND NOT EXISTS (
+                SELECT 1 FROM convive c WHERE c.nom = 'Garcia' AND c.prenom = 'Nora'
+              );
+        </sql>
+    </changeSet>
+
+    <changeSet id="028-seed-convive-relations" author="youssefboubakri">
+        <sql>
+            INSERT INTO convive_allergene (convive_id, allergene_id)
+            SELECT c.id, a.id
+            FROM convive c, allergene a
+            WHERE c.nom = 'Martin' AND c.prenom = 'Lea' AND a.code = 'GLUTEN'
+              AND NOT EXISTS (
+                SELECT 1 FROM convive_allergene x WHERE x.convive_id = c.id AND x.allergene_id = a.id
+              );
+
+            INSERT INTO convive_allergene (convive_id, allergene_id)
+            SELECT c.id, a.id
+            FROM convive c, allergene a
+            WHERE c.nom = 'Benali' AND c.prenom = 'Yanis' AND a.code = 'LAIT'
+              AND NOT EXISTS (
+                SELECT 1 FROM convive_allergene x WHERE x.convive_id = c.id AND x.allergene_id = a.id
+              );
+
+            INSERT INTO convive_allergene (convive_id, allergene_id)
+            SELECT c.id, a.id
+            FROM convive c, allergene a
+            WHERE c.nom = 'Moreau' AND c.prenom = 'Henri' AND a.code = 'POISSON'
+              AND NOT EXISTS (
+                SELECT 1 FROM convive_allergene x WHERE x.convive_id = c.id AND x.allergene_id = a.id
+              );
+
+            INSERT INTO convive_regime (convive_id, regime_id)
+            SELECT c.id, r.id
+            FROM convive c, regime r
+            WHERE c.nom = 'Dupont' AND c.prenom = 'Emma' AND r.code = 'VEGETARIEN'
+              AND NOT EXISTS (
+                SELECT 1 FROM convive_regime x WHERE x.convive_id = c.id AND x.regime_id = r.id
+              );
+
+            INSERT INTO convive_regime (convive_id, regime_id)
+            SELECT c.id, r.id
+            FROM convive c, regime r
+            WHERE c.nom = 'Garcia' AND c.prenom = 'Nora' AND r.code = 'SANS_PORC'
+              AND NOT EXISTS (
+                SELECT 1 FROM convive_regime x WHERE x.convive_id = c.id AND x.regime_id = r.id
+              );
+        </sql>
+    </changeSet>
+
+    <changeSet id="029-seed-utilisateurs-services" author="youssefboubakri">
+        <sql>
+            INSERT INTO utilisateur (username, password, email, telephone, poste, role, actif, site_id)
+            SELECT 'admin.demo',
+                   '$2a$10$H7jRDWMM6zMrqPJyBJm5wuAJkLcdHrjS3Y/YxelgL0/sHM.kyFhg.',
+                   'admin.demo@safemeal.local',
+                   '0600000001',
+                   'Administrateur',
+                   'ADMIN',
+                   true,
+                   s.id
+            FROM site_restauration s
+            WHERE s.nom = 'Ecole Primaire Horizon'
+              AND NOT EXISTS (SELECT 1 FROM utilisateur u WHERE u.username = 'admin.demo');
+
+            INSERT INTO utilisateur (username, password, email, telephone, poste, role, actif, site_id)
+            SELECT 'responsable.demo',
+                   '$2a$10$YY8REQ83offTZRK.q5hmWOxTCYVo9AUOahwjLdgY/dqV8Hc4b9OVO',
+                   'responsable.demo@safemeal.local',
+                   '0600000002',
+                   'Responsable restauration',
+                   'RESPONSABLE',
+                   true,
+                   s.id
+            FROM site_restauration s
+            WHERE s.nom = 'Ecole Primaire Horizon'
+              AND NOT EXISTS (SELECT 1 FROM utilisateur u WHERE u.username = 'responsable.demo');
+
+            INSERT INTO utilisateur (username, password, email, telephone, poste, role, actif, site_id)
+            SELECT 'cuisine.demo',
+                   '$2a$10$paRwDRdtBkwMYp1OTLc0PuSKtYOCKUQ9xPJ9QSM3n3Nvp57VJfAca',
+                   'cuisine.demo@safemeal.local',
+                   '0600000003',
+                   'Chef de cuisine',
+                   'CUISINE',
+                   true,
+                   s.id
+            FROM site_restauration s
+            WHERE s.nom = 'Residence Les Oliviers'
+              AND NOT EXISTS (SELECT 1 FROM utilisateur u WHERE u.username = 'cuisine.demo');
+
+            INSERT INTO service_repas (date_service, type_repas, statut, site_id, menu_id)
+            SELECT TIMESTAMP '2026-03-05 12:00:00', 'DEJEUNER', 'PREVU', s.id, m.id
+            FROM site_restauration s, menu m
+            WHERE s.nom = 'Ecole Primaire Horizon' AND m.nom = 'Menu Scolaire Standard'
+              AND NOT EXISTS (
+                SELECT 1 FROM service_repas sr
+                WHERE sr.date_service = TIMESTAMP '2026-03-05 12:00:00' AND sr.site_id = s.id
+              );
+
+            INSERT INTO service_repas (date_service, type_repas, statut, site_id, menu_id)
+            SELECT TIMESTAMP '2026-03-06 12:00:00', 'DEJEUNER', 'PREVU', s.id, m.id
+            FROM site_restauration s, menu m
+            WHERE s.nom = 'Ecole Primaire Horizon' AND m.nom = 'Menu Vegetarien'
+              AND NOT EXISTS (
+                SELECT 1 FROM service_repas sr
+                WHERE sr.date_service = TIMESTAMP '2026-03-06 12:00:00' AND sr.site_id = s.id
+              );
+
+            INSERT INTO service_repas (date_service, type_repas, statut, site_id, menu_id)
+            SELECT TIMESTAMP '2026-03-05 19:00:00', 'DINER', 'PREVU', s.id, m.id
+            FROM site_restauration s, menu m
+            WHERE s.nom = 'Residence Les Oliviers' AND m.nom = 'Menu EHPAD Equilibre'
+              AND NOT EXISTS (
+                SELECT 1 FROM service_repas sr
+                WHERE sr.date_service = TIMESTAMP '2026-03-05 19:00:00' AND sr.site_id = s.id
+              );
+        </sql>
+    </changeSet>
+
+    <changeSet id="030-seed-alertes-actions" author="youssefboubakri">
+        <sql>
+            INSERT INTO alerte_risque (etat, niveau, message, date_creation, convive_id, service_id)
+            SELECT 'NOUVELLE', 'FORT', 'Conflit detecte pour le service. Allergene(s): GLUTEN',
+                   TIMESTAMP '2026-03-04 09:00:00', c.id, s.id
+            FROM convive c, service_repas s, site_restauration site
+            WHERE c.nom = 'Martin' AND c.prenom = 'Lea'
+              AND site.id = s.site_id AND site.nom = 'Ecole Primaire Horizon'
+              AND s.date_service = TIMESTAMP '2026-03-05 12:00:00'
+              AND NOT EXISTS (
+                SELECT 1 FROM alerte_risque a
+                WHERE a.convive_id = c.id AND a.service_id = s.id
+              );
+
+            INSERT INTO alerte_risque (etat, niveau, message, date_creation, convive_id, service_id)
+            SELECT 'VUE', 'MOYEN', 'Conflit detecte pour le service. Regime incompatible.',
+                   TIMESTAMP '2026-03-04 09:30:00', c.id, s.id
+            FROM convive c, service_repas s, site_restauration site
+            WHERE c.nom = 'Garcia' AND c.prenom = 'Nora'
+              AND site.id = s.site_id AND site.nom = 'Residence Les Oliviers'
+              AND s.date_service = TIMESTAMP '2026-03-05 19:00:00'
+              AND NOT EXISTS (
+                SELECT 1 FROM alerte_risque a
+                WHERE a.convive_id = c.id AND a.service_id = s.id
+              );
+
+            INSERT INTO alerte_allergene (alerte_id, allergene_id)
+            SELECT a.id, ag.id
+            FROM alerte_risque a, allergene ag, convive c
+            WHERE c.id = a.convive_id
+              AND c.nom = 'Martin' AND c.prenom = 'Lea'
+              AND ag.code = 'GLUTEN'
+              AND NOT EXISTS (
+                SELECT 1 FROM alerte_allergene x WHERE x.alerte_id = a.id AND x.allergene_id = ag.id
+              );
+
+            INSERT INTO action_corrective (date, type_action, description, alerte_id, utilisateur_id)
+            SELECT TIMESTAMP '2026-03-04 10:00:00',
+                   'REMPLACEMENT_MENU',
+                   'Remplacement par option sans gluten.',
+                   a.id,
+                   u.id
+            FROM alerte_risque a, utilisateur u, convive c
+            WHERE c.id = a.convive_id
+              AND c.nom = 'Martin' AND c.prenom = 'Lea'
+              AND u.username = 'responsable.demo'
+              AND NOT EXISTS (
+                SELECT 1 FROM action_corrective ac WHERE ac.alerte_id = a.id AND ac.type_action = 'REMPLACEMENT_MENU'
+              );
+        </sql>
+    </changeSet>
 </databaseChangeLog>

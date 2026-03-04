@@ -36,9 +36,17 @@ docker compose up -d
 ```
 
 ## Acces
-- Frontend : http://localhost:4200
+- Frontend : http://localhost
 - Backend : http://localhost:8080
 - Swagger/OpenAPI : http://localhost:8080/swagger-ui/index.html
+
+## Donnees de demonstration (Liquibase)
+La base est pre-remplie via Liquibase avec des sites, convives, allergenes, plats, menus, services, alertes et actions correctives.
+
+Comptes de connexion de demonstration :
+- `admin.demo` / `Admin123!` (ADMIN)
+- `responsable.demo` / `Resp123!` (RESPONSABLE)
+- `cuisine.demo` / `Cuisine123!` (CUISINE)
 
 ## Tests
 ```bash

@@ -5,7 +5,7 @@
 Application web fullstack pour la restauration collective, visant a gerer les profils allergiques des convives et a reduire les risques lies aux allergenes dans les menus servis.
 
 ## Contexte
-Projet realise dans le cadre d'une certification RNCP niveau 7 (Expert en Developpement Logiciel – M2 Developpement Fullstack).
+Projet realisé dans le cadre d'une certification RNCP niveau 7 (Expert en Developpement Logiciel – M2 Developpement Fullstack).
 
 ## Objectif
 Permettre la gestion centralisee des profils convives, des plats et des allergenes, et evaluer automatiquement les risques allergenes lors de la planification des services (repas collectifs).

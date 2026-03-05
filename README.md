@@ -49,17 +49,41 @@ Comptes de connexion de demonstration :
 - `cuisine.demo` / `Cuisine123!` (CUISINE)
 
 ## Tests
+Execution rapide depuis la racine du projet.
+
+### Option 1 - Local (Maven installe)
 ```bash
-# backend
+cd backend/repas_sur_backend2
 ./mvnw test
+```
+
+Sur Windows PowerShell :
+```powershell
+cd backend\repas_sur_backend2
+.\mvnw.cmd test
+```
+
+### Option 2 - Docker (sans Java/Maven local)
+Depuis Git Bash :
+```bash
+docker run --rm \
+  -v "/c/Users/<USER>/Documents/Repos/rncp7/repas_sur2/backend/repas_sur_backend2:/app" \
+  -w /app \
+  maven:3.9.6-eclipse-temurin-21 \
+  ./mvnw test
+```
+
+Depuis PowerShell :
+```powershell
+docker run --rm -v "C:\Users\<USER>\Documents\Repos\rncp7\repas_sur2\backend\repas_sur_backend2:/app" -w /app maven:3.9.6-eclipse-temurin-21 ./mvnw test
 ```
 
 ## Documentation
 - Architecture :
-![](G:\Mon Drive\RNCP7\Bloc 1\Architecture.png)
+![](docs/images/architecture.png)
 
 - Diagramme UML des classes : 
-![](G:\Mon Drive\RNCP7\Bloc 2\UML\Classes.drawio.png)
+![](docs/images/uml-classes.png)
 
 - Tests unitaires / integration : a completer
 

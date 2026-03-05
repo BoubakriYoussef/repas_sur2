@@ -51,7 +51,7 @@ Comptes de connexion de demonstration :
 ## Tests
 Execution rapide depuis la racine du projet.
 
-### Option 1 - Local (Maven installe)
+### Backend - Local (Maven installe)
 ```bash
 cd backend/repas_sur_backend2
 ./mvnw test
@@ -63,7 +63,7 @@ cd backend\repas_sur_backend2
 .\mvnw.cmd test
 ```
 
-### Option 2 - Docker (sans Java/Maven local)
+### Backend - Docker (sans Java/Maven local)
 Depuis Git Bash :
 ```bash
 docker run --rm \
@@ -76,6 +76,21 @@ docker run --rm \
 Depuis PowerShell :
 ```powershell
 docker run --rm -v "C:\Users\<USER>\Documents\Repos\rncp7\repas_sur2\backend\repas_sur_backend2:/app" -w /app maven:3.9.6-eclipse-temurin-21 ./mvnw test
+```
+
+### Frontend - Local (Node.js installe)
+```bash
+cd frontend/repas_sur_frontend2
+npm ci
+npm run test -- --watch=false --browsers=ChromeHeadless
+```
+
+### Frontend - CI (ce qui est execute dans GitHub Actions)
+```bash
+cd frontend/repas_sur_frontend2
+npm ci
+npm run test -- --watch=false --browsers=ChromeHeadless
+npm run build -- --configuration=production
 ```
 
 ## Documentation

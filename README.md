@@ -55,7 +55,12 @@ Comptes de connexion de demonstration :
 ```
 
 ## Documentation
-- Diagramme UML des classes : a completer
+- Architecture :
+![](G:\Mon Drive\RNCP7\Bloc 1\Architecture.png)
+
+- Diagramme UML des classes : 
+![](G:\Mon Drive\RNCP7\Bloc 2\UML\Classes.drawio.png)
+
 - Tests unitaires / integration : a completer
 
 ## Licence

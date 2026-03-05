@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { UtilisateurApiService } from '../../core/services/utilisateur-api.service';
 import { SiteApiService } from '../../core/services/site-api.service';
 import { UtilisateurDto } from '../../core/models/utilisateur.dto';
@@ -17,6 +18,7 @@ export class UtilisateursComponent {
   filtered: UtilisateurDto[] = [];
   sites: SiteRestaurationDto[] = [];
   editingId: number | null = null;
+  errorMessage = '';
 
   form!: FormGroup;
   filterForm!: FormGroup;
@@ -45,19 +47,25 @@ export class UtilisateursComponent {
   }
 
   load(): void {
+    this.errorMessage = '';
     this.utilisateurApi.getAll().subscribe({
       next: (data) => {
         this.utilisateurs = data;
         this.applyFilters();
-      }
+      },
+      error: (err) => this.handleError(err, 'chargement des utilisateurs')
     });
-    this.siteApi.getAll().subscribe({ next: (data) => (this.sites = data) });
+    this.siteApi.getAll().subscribe({
+      next: (data) => (this.sites = data),
+      error: (err) => this.handleError(err, 'chargement des sites')
+    });
   }
 
   submit(): void {
     if (this.form.invalid) {
       return;
     }
+    this.errorMessage = '';
     const raw = this.form.getRawValue();
     const payload = {
       ...raw,
@@ -73,7 +81,8 @@ export class UtilisateursComponent {
       next: () => {
         this.resetForm();
         this.load();
-      }
+      },
+      error: (err) => this.handleError(err, this.editingId ? 'mise a jour du compte' : 'creation du compte')
     });
   }
 
@@ -96,7 +105,11 @@ export class UtilisateursComponent {
   }
 
   remove(id: number): void {
-    this.utilisateurApi.delete(id).subscribe({ next: () => this.load() });
+    this.errorMessage = '';
+    this.utilisateurApi.delete(id).subscribe({
+      next: () => this.load(),
+      error: (err) => this.handleError(err, 'suppression du compte')
+    });
   }
 
   applyFilters(): void {
@@ -126,5 +139,18 @@ export class UtilisateursComponent {
       actif: true,
       siteId: null
     });
+  }
+
+  private handleError(err: unknown, action: string): void {
+    const httpErr = err as HttpErrorResponse;
+    if (httpErr?.status === 403) {
+      this.errorMessage = "Action refusee: seuls les administrateurs peuvent gerer les utilisateurs.";
+      return;
+    }
+    if (httpErr?.status === 401) {
+      this.errorMessage = "Session invalide ou expiree. Merci de vous reconnecter.";
+      return;
+    }
+    this.errorMessage = `Erreur lors de ${action}.`;
   }
 }

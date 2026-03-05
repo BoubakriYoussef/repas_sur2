@@ -12,11 +12,9 @@ import { ParametresComponent } from './pages/parametres/parametres.component';
 import { UtilisateursComponent } from './pages/utilisateurs/utilisateurs.component';
 import { ActionsCorrectivesComponent } from './pages/actions-correctives/actions-correctives.component';
 import { LoginComponent } from './pages/auth/login.component';
-import { RegisterComponent } from './pages/auth/register.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
   {
     path: '',
     component: LayoutComponent,

@@ -5,6 +5,10 @@
   </div>
 </div>
 
+<p *ngIf="errorMessage" class="mt-4 rounded-xl border border-accent2/40 bg-accent2/10 px-4 py-3 text-sm text-accent2">
+  {{ errorMessage }}
+</p>
+
 <form class="mt-6 grid gap-4 rounded-3xl border border-stroke bg-card p-6 shadow-soft" [formGroup]="form" (ngSubmit)="submit()">
   <div class="grid gap-4 md:grid-cols-3">
     <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Nom utilisateur" formControlName="username" />

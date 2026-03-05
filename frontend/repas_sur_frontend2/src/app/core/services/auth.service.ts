@@ -8,13 +8,6 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface RegisterRequest {
-  username: string;
-  password: string;
-  email?: string;
-  role?: 'ADMIN' | 'RESPONSABLE' | 'CUISINE';
-}
-
 export interface AuthResponse {
   token: string;
   role: string;
@@ -29,12 +22,6 @@ export class AuthService {
 
   login(payload: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}/login`, payload).pipe(
-      tap((res) => this.setToken(res.token))
-    );
-  }
-
-  register(payload: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/register`, payload).pipe(
       tap((res) => this.setToken(res.token))
     );
   }

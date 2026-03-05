@@ -35,5 +35,7 @@ jobs:
           cache-dependency-path: frontend/repas_sur_frontend2/package-lock.json
       - name: Install
         run: npm ci
+      - name: Test (Angular)
+        run: npm run test -- --watch=false --browsers=ChromeHeadless
       - name: Build (Angular)
         run: npm run build -- --configuration=production

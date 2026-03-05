@@ -49,17 +49,56 @@ Comptes de connexion de demonstration :
 - `cuisine.demo` / `Cuisine123!` (CUISINE)
 
 ## Tests
+Execution rapide depuis la racine du projet.
+
+### Backend - Local (Maven installe)
 ```bash
-# backend
+cd backend/repas_sur_backend2
 ./mvnw test
+```
+
+Sur Windows PowerShell :
+```powershell
+cd backend\repas_sur_backend2
+.\mvnw.cmd test
+```
+
+### Backend - Docker (sans Java/Maven local)
+Depuis Git Bash :
+```bash
+docker run --rm \
+  -v "/c/Users/<USER>/Documents/Repos/rncp7/repas_sur2/backend/repas_sur_backend2:/app" \
+  -w /app \
+  maven:3.9.6-eclipse-temurin-21 \
+  ./mvnw test
+```
+
+Depuis PowerShell :
+```powershell
+docker run --rm -v "C:\Users\<USER>\Documents\Repos\rncp7\repas_sur2\backend\repas_sur_backend2:/app" -w /app maven:3.9.6-eclipse-temurin-21 ./mvnw test
+```
+
+### Frontend - Local (Node.js installe)
+```bash
+cd frontend/repas_sur_frontend2
+npm ci
+npm run test -- --watch=false --browsers=ChromeHeadless
+```
+
+### Frontend - CI (ce qui est execute dans GitHub Actions)
+```bash
+cd frontend/repas_sur_frontend2
+npm ci
+npm run test -- --watch=false --browsers=ChromeHeadless
+npm run build -- --configuration=production
 ```
 
 ## Documentation
 - Architecture :
-![](G:\Mon Drive\RNCP7\Bloc 1\Architecture.png)
+![](docs/images/architecture.png)
 
 - Diagramme UML des classes : 
-![](G:\Mon Drive\RNCP7\Bloc 2\UML\Classes.drawio.png)
+![](docs/images/uml-classes.png)
 
 - Tests unitaires / integration : a completer
 

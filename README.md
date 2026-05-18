@@ -93,6 +93,12 @@ npm run test -- --watch=false --browsers=ChromeHeadless
 npm run build -- --configuration=production
 ```
 
+## Deploiement VPS
+
+Un guide de deploiement continu sur VPS OVH est disponible ici :
+
+- [DEPLOYMENT.md](/C:/Users/youss/OneDrive/Bureau/vfinal/repas_sur2/DEPLOYMENT.md)
+
 ## Documentation
 - Architecture :
 ![](docs/images/architecture.png)

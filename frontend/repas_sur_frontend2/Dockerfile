@@ -8,7 +8,7 @@ RUN npm install
 COPY . .
 RUN npm run build -- --configuration production
 
-FROM nginx:1.25-alpine
+FROM nginx:1.31-alpine
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist/repas_sur_frontend2_tmp/browser/ /usr/share/nginx/html/

@@ -10,7 +10,7 @@ RUN --mount=type=cache,target=/root/.m2 ./mvnw -q -DskipTests dependency:go-offl
 COPY src src
 RUN --mount=type=cache,target=/root/.m2 ./mvnw -DskipTests -Dmaven.test.skip=true package
 
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:25-jre
 
 WORKDIR /app
 

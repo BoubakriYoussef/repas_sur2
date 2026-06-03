@@ -40,6 +40,18 @@ services:
     ports:
       - "80:80"
 
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - app
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
 volumes:
   db_data:
 

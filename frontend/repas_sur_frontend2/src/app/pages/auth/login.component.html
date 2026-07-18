@@ -1,7 +1,13 @@
 <div class="min-h-screen flex items-center justify-center px-6">
   <div class="w-full max-w-md rounded-3xl border border-stroke bg-card p-8 shadow-soft">
-    <h2 class="app-title text-2xl font-semibold">Connexion</h2>
-    <p class="text-sm text-muted">Acces aux operations RepasSûr</p>
+    <div class="mb-6 flex items-center gap-4">
+      <img src="/logo.png" alt="Logo RepasSur" class="h-16 w-16 rounded-2xl bg-white object-contain p-2 shadow-soft" />
+      <div>
+        <p class="text-xs uppercase tracking-[0.2em] text-muted">RepasSur</p>
+        <h2 class="app-title text-2xl font-semibold">Connexion</h2>
+      </div>
+    </div>
+    <p class="text-sm text-muted">Acces aux operations RepasSur</p>
 
     <form class="mt-6 grid gap-4" [formGroup]="form" (ngSubmit)="submit()">
       <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Identifiant" formControlName="username" />

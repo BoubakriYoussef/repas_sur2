@@ -1,112 +1,249 @@
-﻿# RepasSûr
+# RepasSur
 
 [![CI](https://github.com/BoubakriYoussef/repas_sur2/actions/workflows/ci.yml/badge.svg)](https://github.com/BoubakriYoussef/repas_sur2/actions/workflows/ci.yml)
 
-Application web fullstack pour la restauration collective, visant a gerer les profils allergiques des convives et a reduire les risques lies aux allergenes dans les menus servis.
+Application web full stack de restauration collective permettant de centraliser les profils convives, les allergies, les regimes alimentaires, les plats, les menus et les services afin de reduire le risque allergenique lors de la preparation et du service des repas.
 
-## Contexte
-Projet realisé dans le cadre d'une certification RNCP niveau 7 (Expert en Developpement Logiciel – M2 Developpement Fullstack).
+## Cadre du projet
 
-## Objectif
-Permettre la gestion centralisee des profils convives, des plats et des allergenes, et evaluer automatiquement les risques allergenes lors de la planification des services (repas collectifs).
+Ce depot contient le code source du projet realise dans le cadre de la certification RNCP niveau 7 "Expert en developpement logiciel".
 
-## Stack technique
-- Backend : Java 21, Spring Boot, Spring Data JPA, Hibernate
-- Base de donnees : PostgreSQL
+L'objectif du projet est de demonstrer la conception et la mise en oeuvre d'une solution logicielle complete, securisee, testee et deployee autour d'un besoin metier concret :
+
+- fiabiliser la gestion des informations sensibles liees aux allergies alimentaires ;
+- outiller les equipes de restauration dans la planification des repas ;
+- detecter en amont les situations a risque ;
+- tracer les alertes et les actions correctives.
+
+## Probleme metier traite
+
+Dans un contexte de restauration collective, la multiplication des profils alimentaires, des allergies et des contraintes de service augmente le risque d'erreur humaine. RepasSur apporte une reponse outillee en structurant les donnees metier et en automatisant l'identification des incompatibilites entre convives, plats et menus.
+
+## Fonctionnalites principales
+
+- authentification securisee par JWT et gestion des roles ;
+- gestion des convives et de leurs contraintes alimentaires ;
+- gestion du referentiel des allergenes et des regimes ;
+- gestion des sites de restauration ;
+- gestion des plats, menus et services de repas ;
+- evaluation automatique des risques allergeniques ;
+- suivi des alertes et des actions correctives ;
+- exposition d'une API REST documentee via OpenAPI / Swagger ;
+- supervision technique via Spring Boot Actuator et Prometheus.
+
+## Perimetre technique
+
+- Backend : Java 21, Spring Boot, Spring Security, Spring Data JPA, Hibernate, Liquibase
 - Frontend : Angular 20
+- Base de donnees : PostgreSQL 15
 - Conteneurisation : Docker, Docker Compose
-- Outils : Maven, Lombok, Bean Validation, Spring Security (JWT)
+- Tests : JUnit 5, Spring Test, Mockito, Karma, Jasmine
+- Qualite et observabilite : GitHub Actions, JaCoCo, Actuator, Prometheus
 
-## Fonctionnalites cles
-- Gestion des convives (CRUD, allergies, regimes)
-- Referentiel d'allergenes
-- Gestion des plats, menus et services
-- Evaluation automatique des risques allergenes
-- Tableau de bord des alertes
-- (Optionnel) Microservice IA de recommandation de menus
+## Architecture de la solution
 
-## Architecture
-- Architecture 3-tiers : frontend / backend / base de donnees
-- API REST (backend)
-- Modele JPA centre sur : Convive, Allergene, Plat, Menu, Service, Alerte
+L'application repose sur une architecture 3 tiers :
 
-## Demarrage rapide (Docker)
-```bash
-docker compose up -d
+- un frontend Angular pour l'interface utilisateur ;
+- un backend Spring Boot exposant une API REST ;
+- une base PostgreSQL pour la persistence des donnees.
+
+Le projet est organise autour des grands objets metier suivants :
+
+- Convive
+- Allergene
+- Regime
+- Plat
+- Menu
+- ServiceRepas
+- AlerteRisque
+- ActionCorrective
+- SiteRestauration
+- Utilisateur
+
+Schema d'architecture :
+
+![](docs/images/architecture.png)
+
+Diagramme UML simplifie :
+
+![](docs/images/uml-classes.png)
+
+## Structure du depot
+
+```text
+repas_sur2/
+├── backend/repas_sur_backend2      # API Spring Boot
+├── frontend/repas_sur_frontend2    # application Angular
+├── monitoring/                     # configuration Prometheus
+├── docs/images/                    # schemas d'architecture et UML
+├── docker-compose.yml              # lancement local complet
+├── DEPLOYMENT.md                   # guide de deploiement VPS
+└── README-MIGRATIONS.md            # informations sur les migrations
 ```
 
-## Acces
-- Frontend : http://localhost
-- Backend : http://localhost:8080
-- Swagger/OpenAPI : http://localhost:8080/swagger-ui/index.html
+## Pre-requis
 
-## Donnees de demonstration (Liquibase)
-La base est pre-remplie via Liquibase avec des sites, convives, allergenes, plats, menus, services, alertes et actions correctives.
+Pour une execution via Docker :
 
-Comptes de connexion de demonstration :
-- `admin.demo` / `Admin123!` (ADMIN)
-- `responsable.demo` / `Resp123!` (RESPONSABLE)
-- `cuisine.demo` / `Cuisine123!` (CUISINE)
+- Docker
+- Docker Compose
+
+Pour une execution locale hors conteneur :
+
+- Java 21
+- Maven Wrapper fourni par le projet
+- Node.js et npm
+- PostgreSQL 15
+
+## Variables d'environnement
+
+Le projet fournit un fichier [`.env.example`](/C:/Users/youss/OneDrive/Bureau/vfinal/repas_sur2/.env.example) a recopier en `.env`.
+
+Variables principales :
+
+- `POSTGRES_DB`
+- `POSTGRES_USER`
+- `POSTGRES_PASSWORD`
+- `SPRING_PROFILES_ACTIVE`
+- `JWT_SECRET`
+- `JWT_EXPIRATION_MS`
+
+Points d'attention :
+
+- `POSTGRES_PASSWORD` doit etre defini avant le lancement ;
+- `JWT_SECRET` doit etre une cle Base64 suffisamment robuste ;
+- le profil par defaut en conteneur est `prod`.
+
+## Demarrage rapide
+
+1. Copier le fichier d'exemple :
+
+```bash
+cp .env.example .env
+```
+
+Sous PowerShell :
+
+```powershell
+Copy-Item .env.example .env
+```
+
+2. Renseigner les secrets dans `.env`.
+
+3. Lancer la solution :
+
+```bash
+docker compose up -d --build
+```
+
+## Acces a l'application
+
+- Frontend : `http://localhost`
+- Backend : `http://localhost:8080`
+- Swagger UI : `http://localhost:8080/swagger-ui/index.html`
+- Actuator Prometheus : `http://localhost:8080/actuator/prometheus`
+- Prometheus : `http://localhost:9090`
+
+## Comptes de demonstration
+
+Des donnees de demonstration sont injectees via Liquibase afin de faciliter l'evaluation fonctionnelle du projet.
+
+Comptes disponibles :
+
+- `admin.demo` / `Admin123!` : role `ADMIN`
+- `responsable.demo` / `Resp123!` : role `RESPONSABLE`
+- `cuisine.demo` / `Cuisine123!` : role `CUISINE`
+
+## Jeux de donnees et migrations
+
+Le schema de base de donnees et les donnees initiales sont geres par Liquibase.
+
+- fichier maitre : [db.changelog-master.xml](/C:/Users/youss/OneDrive/Bureau/vfinal/repas_sur2/backend/repas_sur_backend2/src/main/resources/db/changelog/db.changelog-master.xml)
+- informations complementaires : [README-MIGRATIONS.md](/C:/Users/youss/OneDrive/Bureau/vfinal/repas_sur2/README-MIGRATIONS.md)
+
+## Securite
+
+Les choix de securisation visibles dans le code source sont les suivants :
+
+- authentification par token JWT ;
+- controle d'acces par roles ;
+- validation des donnees cote backend ;
+- separation des responsabilites entre interface, API et persistence ;
+- non-committal des secrets grace au fichier `.env.example`.
 
 ## Tests
-Execution rapide depuis la racine du projet.
 
-### Backend - Local (Maven installe)
+Le depot contient des tests backend et frontend.
+
+### Backend
+
+Depuis la racine du projet :
+
 ```bash
 cd backend/repas_sur_backend2
 ./mvnw test
 ```
 
-Sur Windows PowerShell :
+Sous PowerShell :
+
 ```powershell
 cd backend\repas_sur_backend2
 .\mvnw.cmd test
 ```
 
-### Backend - Docker (sans Java/Maven local)
-Depuis Git Bash :
+Pour generer egalement le rapport JaCoCo :
+
 ```bash
-docker run --rm \
-  -v "/c/Users/<USER>/Documents/Repos/rncp7/repas_sur2/backend/repas_sur_backend2:/app" \
-  -w /app \
-  maven:3.9.6-eclipse-temurin-21 \
-  ./mvnw test
+cd backend/repas_sur_backend2
+./mvnw verify
 ```
 
-Depuis PowerShell :
-```powershell
-docker run --rm -v "C:\Users\<USER>\Documents\Repos\rncp7\repas_sur2\backend\repas_sur_backend2:/app" -w /app maven:3.9.6-eclipse-temurin-21 ./mvnw test
-```
+### Frontend
 
-### Frontend - Local (Node.js installe)
 ```bash
 cd frontend/repas_sur_frontend2
 npm ci
 npm run test -- --watch=false --browsers=ChromeHeadless
 ```
 
-### Frontend - CI (ce qui est execute dans GitHub Actions)
+### Build frontend
+
 ```bash
 cd frontend/repas_sur_frontend2
 npm ci
-npm run test -- --watch=false --browsers=ChromeHeadless
 npm run build -- --configuration=production
 ```
 
-## Deploiement VPS
+## Integration continue
 
-Un guide de deploiement continu sur VPS OVH est disponible ici :
+Une pipeline CI GitHub Actions est associee au depot et permet de verifier automatiquement la qualite de l'application a chaque evolution du code.
+
+## Deploiement
+
+Un guide dedie au deploiement VPS est disponible dans :
 
 - [DEPLOYMENT.md](/C:/Users/youss/OneDrive/Bureau/vfinal/repas_sur2/DEPLOYMENT.md)
 
-## Documentation
-- Architecture :
-![](docs/images/architecture.png)
+## Contenu attendu pour l'evaluation
 
-- Diagramme UML des classes : 
-![](docs/images/uml-classes.png)
+Ce depot permet d'evaluer :
 
-- Tests unitaires / integration : a completer
+- la conception d'une application metier full stack ;
+- la structuration d'une architecture logicielle claire ;
+- la mise en place d'une securisation de base adaptee au contexte ;
+- la gestion des donnees et des migrations ;
+- l'automatisation des tests et du deploiement ;
+- la capacite a fournir un code source exploitable et documente.
+
+## Limites et perimetre de remise
+
+Ce projet est un projet academique. Il a vocation a demonstrer une demarche d'ingenierie logicielle complete dans un cadre de certification. Il ne constitue pas, en l'etat, un dispositif medical ni une garantie operationnelle absolue contre le risque allergique.
+
+## Auteur
+
+Youssef Boubakri
 
 ## Licence
-Projet academique.
+
+Projet academique depose dans le cadre d'une certification.

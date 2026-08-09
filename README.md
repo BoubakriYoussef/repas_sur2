@@ -144,6 +144,41 @@ docker compose up -d --build
 - Swagger UI : `http://localhost:8080/swagger-ui/index.html`
 - Actuator Prometheus : `http://localhost:8080/actuator/prometheus`
 - Prometheus : `http://localhost:9090`
+- Grafana : `http://localhost:3000`
+- Alertmanager : `http://localhost:9093`
+- Blackbox Exporter : `http://localhost:9115`
+- Boite de reception des alertes : `http://localhost:8025`
+
+La procédure de supervision, les seuils et le scénario de panne sont détaillés
+dans [docs/MONITORING.md](docs/MONITORING.md).
+
+## Maintenance des dépendances
+
+Dependabot, npm audit et OWASP Dependency-Check surveillent les dépendances du
+projet. La procédure de mise à jour, les commandes de contrôle et les preuves à
+conserver sont décrites dans [docs/DEPENDENCY-MANAGEMENT.md](docs/DEPENDENCY-MANAGEMENT.md).
+
+## Signalement des anomalies
+
+Le formulaire GitHub Issue impose les informations nécessaires à la reproduction
+d'un bug. Le cycle de vie, la criticité et les commandes de diagnostic sont
+décrits dans [docs/INCIDENT-MANAGEMENT.md](docs/INCIDENT-MANAGEMENT.md).
+
+Le workflow de correction, de test et de déploiement est documenté dans
+[docs/CORRECTIVE-MAINTENANCE.md](docs/CORRECTIVE-MAINTENANCE.md).
+
+L'analyse mesurée des améliorations et le questionnaire utilisateur sont
+disponibles dans [docs/IMPROVEMENT-PROPOSALS.md](docs/IMPROVEMENT-PROPOSALS.md)
+et [docs/USER-FEEDBACK-TEMPLATE.md](docs/USER-FEEDBACK-TEMPLATE.md).
+
+La politique Semantic Versioning, la procédure de release et l'historique sont
+décrits dans [docs/VERSIONING.md](docs/VERSIONING.md) et [CHANGELOG.md](CHANGELOG.md).
+
+Le processus de collaboration avec les utilisateurs et le support est décrit
+dans [docs/SUPPORT.md](docs/SUPPORT.md).
+
+La matrice de préparation et la liste des preuves restantes pour le Bloc 4 sont
+centralisées dans [docs/BLOCK4-READINESS.md](docs/BLOCK4-READINESS.md).
 
 ## Comptes de demonstration
 

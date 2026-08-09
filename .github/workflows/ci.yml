@@ -18,8 +18,19 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "21"
-      - name: Build & test (Spring Boot)
-        run: ./mvnw clean test
+      - name: Build, test and dependency audit (Spring Boot)
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: ./mvnw clean verify
+      - name: Publish OWASP Dependency-Check report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-dependency-check-report
+          path: |
+            backend/repas_sur_backend2/target/dependency-check-report.html
+            backend/repas_sur_backend2/target/dependency-check-report.json
+          if-no-files-found: ignore
 
   frontend:
     runs-on: ubuntu-latest
@@ -35,6 +46,8 @@ jobs:
           cache-dependency-path: frontend/repas_sur_frontend2/package-lock.json
       - name: Install
         run: npm ci
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
       - name: Test (Angular)
         run: npm run test -- --watch=false --browsers=ChromeHeadless
       - name: Build (Angular)

@@ -1,0 +1,89 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/repas_sur_frontend2/package-lock.json
+
+      - name: Validate tag, project versions and changelog
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+
+          BACKEND_VERSION="$(./backend/repas_sur_backend2/mvnw \
+            -f backend/repas_sur_backend2/pom.xml \
+            help:evaluate -Dexpression=project.version -q -DforceStdout)"
+          FRONTEND_VERSION="$(node -p \
+            "require('./frontend/repas_sur_frontend2/package.json').version")"
+
+          test "$BACKEND_VERSION" = "$VERSION"
+          test "$FRONTEND_VERSION" = "$VERSION"
+          grep -Fq "## [$VERSION] - " CHANGELOG.md
+
+      - name: Verify backend
+        working-directory: backend/repas_sur_backend2
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: ./mvnw clean verify
+
+      - name: Install frontend
+        working-directory: frontend/repas_sur_frontend2
+        run: npm ci
+      - name: Audit frontend dependencies
+        working-directory: frontend/repas_sur_frontend2
+        run: npm audit --audit-level=high
+      - name: Test frontend
+        working-directory: frontend/repas_sur_frontend2
+        run: npm run test -- --watch=false --browsers=ChromeHeadless
+      - name: Build frontend
+        working-directory: frontend/repas_sur_frontend2
+        run: npm run build -- --configuration=production
+
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract release notes from changelog
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v header="## [$VERSION] - " '
+            index($0, header) == 1 { capture = 1; next }
+            capture && /^## \[/ { exit }
+            capture { print }
+          ' CHANGELOG.md > release-notes.md
+          test -s release-notes.md
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "$GITHUB_REF_NAME"
+          --verify-tag
+          --title "RepasSûr $GITHUB_REF_NAME"
+          --notes-file release-notes.md

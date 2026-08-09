@@ -1,0 +1,20 @@
+global:
+  resolve_timeout: 1m
+  smtp_smarthost: mailpit:1025
+  smtp_from: alertmanager@repas-sur.local
+  smtp_require_tls: false
+
+route:
+  receiver: repas-sur-mail
+  group_by:
+    - alertname
+    - service
+  group_wait: 10s
+  group_interval: 1m
+  repeat_interval: 4h
+
+receivers:
+  - name: repas-sur-mail
+    email_configs:
+      - to: exploitation@repas-sur.local
+        send_resolved: true

@@ -184,6 +184,8 @@
                 <configuration>
                     <failBuildOnCVSS>7</failBuildOnCVSS>
                     <nvdApiKeyEnvironmentVariable>NVD_API_KEY</nvdApiKeyEnvironmentVariable>
+                    <suppressionFile>${project.basedir}/dependency-check-suppressions.xml</suppressionFile>
+                    <failBuildOnUnusedSuppressionRule>true</failBuildOnUnusedSuppressionRule>
                     <formats>
                         <format>HTML</format>
                         <format>JSON</format>

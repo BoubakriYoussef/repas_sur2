@@ -6,6 +6,12 @@ on:
     types:
       - completed
   workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branche main ou tag SemVer exact à déployer"
+        required: true
+        default: "main"
+        type: string
 
 jobs:
   deploy:
@@ -30,6 +36,13 @@ jobs:
             set -e
 
             APP_DIR="${{ secrets.APP_DIR }}"
+            DEPLOY_REF="${{ github.event.inputs.ref || 'main' }}"
+
+            if ! [[ "$DEPLOY_REF" =~ ^(main|v[0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+              echo "Ref de déploiement invalide: $DEPLOY_REF"
+              exit 1
+            fi
+
             if [ -z "$APP_DIR" ]; then
               APP_DIR="/opt/repas_sur2"
             fi
@@ -39,12 +52,34 @@ jobs:
             fi
 
             cd "$APP_DIR"
-            git fetch origin
-            git checkout main
-            git pull --ff-only origin main
+            git fetch --tags origin
+
+            if [ "$DEPLOY_REF" = "main" ]; then
+              git checkout main
+              git pull --ff-only origin main
+              DEPLOYED_VERSION="main@$(git rev-parse --short HEAD)"
+            else
+              git rev-parse --verify "refs/tags/$DEPLOY_REF"
+              git checkout --detach "refs/tags/$DEPLOY_REF"
+              DEPLOYED_VERSION="$DEPLOY_REF"
+            fi
 
             docker compose \
               --env-file .env \
               -f docker-compose.yml \
               -f docker-compose.prod.yml \
               up -d --build --remove-orphans
+
+            curl --fail --silent --show-error http://127.0.0.1/ > /dev/null
+            HEALTH="$(curl --fail --silent --show-error \
+              http://127.0.0.1:8080/actuator/health)"
+            echo "$HEALTH" | grep -q '"status":"UP"'
+
+            mkdir -p .deployment
+            printf '%s\n' "$DEPLOYED_VERSION" > .deployment/version
+            git rev-parse HEAD > .deployment/commit
+            date --utc --iso-8601=seconds > .deployment/deployed-at
+
+            echo "DEPLOYED_VERSION=$DEPLOYED_VERSION"
+            echo "DEPLOYED_COMMIT=$(cat .deployment/commit)"
+            echo "DEPLOYED_AT=$(cat .deployment/deployed-at)"

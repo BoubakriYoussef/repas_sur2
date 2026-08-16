@@ -1,0 +1,166 @@
+name: Signaler une anomalie
+description: Signaler un comportement incorrect de RepasSûr avec les informations nécessaires à sa reproduction.
+title: "[BUG] "
+labels:
+  - bug
+  - "status: new"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de compléter tous les champs. Supprimez les mots de passe, tokens,
+        données médicales et autres informations personnelles des logs et captures.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version de RepasSûr
+      description: Version ou identifiant du déploiement concerné.
+      placeholder: v1.2.0 ou SHA du commit
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environnement
+      options:
+        - Production
+        - Préproduction
+        - Local avec Docker Compose
+        - Local hors Docker
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Composant concerné
+      options:
+        - Frontend Angular
+        - API Spring Boot
+        - Base PostgreSQL ou migration Liquibase
+        - Authentification ou autorisation
+        - Docker ou déploiement
+        - Supervision ou alertes
+        - Inconnu
+    validations:
+      required: true
+
+  - type: input
+    id: context
+    attributes:
+      label: Contexte technique
+      description: Navigateur et version, système, appareil ou client HTTP utilisé.
+      placeholder: Chrome 151, Windows 11, ordinateur portable
+    validations:
+      required: true
+
+  - type: input
+    id: user_role
+    attributes:
+      label: Rôle utilisateur
+      placeholder: ADMIN, RESPONSABLE ou CUISINE — ne pas indiquer l'identité de la personne
+    validations:
+      required: true
+
+  - type: textarea
+    id: preconditions
+    attributes:
+      label: Préconditions
+      description: État ou données nécessaires avant de reproduire l'anomalie.
+      placeholder: L'utilisateur est connecté avec le rôle RESPONSABLE et le menu du 09/08/2026 existe.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Étapes de reproduction
+      description: Fournir une liste numérotée, précise et reproductible.
+      placeholder: |
+        1. Ouvrir la page Menus.
+        2. Sélectionner le menu du 09/08/2026.
+        3. Cliquer sur Enregistrer.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Résultat attendu
+      placeholder: Le menu est enregistré et un message de confirmation s'affiche.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Résultat obtenu
+      placeholder: Une erreur 403 s'affiche et le menu n'est pas enregistré.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: Fréquence
+      options:
+        - Systématique
+        - Fréquente
+        - Intermittente
+        - Une seule fois
+        - Inconnue
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Criticité estimée
+      description: La criticité sera confirmée pendant la qualification.
+      options:
+        - S1 - Critique - service indisponible, sécurité ou perte de données
+        - S2 - Majeure - fonction essentielle bloquée sans contournement
+        - S3 - Mineure - gêne avec contournement disponible
+        - S4 - Faible - défaut visuel ou amélioration de confort
+    validations:
+      required: true
+
+  - type: input
+    id: timestamp
+    attributes:
+      label: Date et heure du constat
+      description: Inclure le fuseau horaire pour retrouver les logs correspondants.
+      placeholder: 2026-08-09 14:35 Europe/Paris
+    validations:
+      required: true
+
+  - type: input
+    id: endpoint
+    attributes:
+      label: URL ou endpoint concerné
+      placeholder: /menus ou POST /api/menus
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs ou réponse HTTP anonymisés
+      description: Indiquer le statut HTTP, l'identifiant de corrélation et les lignes utiles uniquement.
+      render: shell
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Captures ou éléments complémentaires
+      description: Glisser les captures ici après avoir masqué toute donnée sensible.
+
+  - type: checkboxes
+    id: security
+    attributes:
+      label: Vérification des données
+      options:
+        - label: J'ai retiré les mots de passe, tokens et données personnelles ou médicales.
+          required: true
+        - label: J'ai vérifié que cette anomalie n'est pas déjà signalée.
+          required: true

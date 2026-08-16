@@ -1,0 +1,132 @@
+name: Demander de l'aide
+description: Obtenir de l'aide pour utiliser RepasSûr ou comprendre un comportement.
+title: "[SUPPORT] "
+labels:
+  - support
+  - "status: new"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Décrivez votre objectif sans publier de mot de passe, token, donnée
+        médicale ou donnée personnelle. Une anomalie reproductible pourra être
+        requalifiée en bug tout en conservant l'historique de cet échange.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version de RepasSûr
+      description: Version affichée ou identifiant du déploiement utilisé.
+      placeholder: v2.4.0 ou SHA du commit
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environnement
+      options:
+        - Production
+        - Préproduction
+        - Local avec Docker Compose
+        - Local hors Docker
+    validations:
+      required: true
+
+  - type: input
+    id: context
+    attributes:
+      label: Contexte technique
+      description: Navigateur, système et type d'appareil, sans identité personnelle.
+      placeholder: Chrome 151, Windows 11, ordinateur portable
+    validations:
+      required: true
+
+  - type: input
+    id: role
+    attributes:
+      label: Rôle utilisé
+      placeholder: ADMIN, RESPONSABLE ou CUISINE
+    validations:
+      required: true
+
+  - type: dropdown
+    id: request_type
+    attributes:
+      label: Type de demande
+      options:
+        - Aide à la navigation
+        - Compréhension d'une alerte ou d'un résultat
+        - Aide à la saisie ou à la configuration
+        - Accès ou autorisation
+        - Comportement inattendu à qualifier
+        - Proposition d'amélioration
+        - Autre question fonctionnelle
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Objectif recherché
+      description: Expliquez ce que vous souhaitez réussir dans l'application.
+      placeholder: Je souhaite retrouver les alertes associées au menu du jour.
+    validations:
+      required: true
+
+  - type: textarea
+    id: attempted_steps
+    attributes:
+      label: Actions déjà réalisées
+      description: Décrivez les écrans visités et les actions tentées dans l'ordre.
+      placeholder: |
+        1. Je me connecte avec le rôle RESPONSABLE.
+        2. J'ouvre la page Alertes.
+        3. Je sélectionne la date du jour.
+    validations:
+      required: true
+
+  - type: textarea
+    id: blocker
+    attributes:
+      label: Blocage ou question
+      description: Indiquez le message visible et ce qui vous empêche d'avancer.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact sur votre activité
+      options:
+        - Bloquant - aucune solution de contournement
+        - Important - contournement difficile
+        - Modéré - contournement simple
+        - Faible - question ou amélioration de confort
+    validations:
+      required: true
+
+  - type: input
+    id: timestamp
+    attributes:
+      label: Date et heure du constat
+      description: Inclure le fuseau horaire pour faciliter la recherche des logs.
+      placeholder: 2026-08-09 15:00 Europe/Paris
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Capture ou message anonymisé
+      description: Masquez toute donnée personnelle, médicale, mot de passe ou token.
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Protection des données
+      options:
+        - label: J'ai retiré les secrets et les données personnelles ou médicales.
+          required: true
+        - label: J'accepte de poursuivre l'échange dans les commentaires de cette issue.
+          required: true

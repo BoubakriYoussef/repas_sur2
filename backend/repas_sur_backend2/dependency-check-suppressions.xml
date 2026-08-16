@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.4.xsd"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.4.xsd
+                                  https://dependency-check.github.io/DependencyCheck/dependency-suppression.1.4.xsd">
+    <suppress until="2026-10-01Z">
+        <notes><![CDATA[
+        CVE-2026-66299 concerne exclusivement l'application d'exemple de chat WebSocket de Tomcat.
+        RepasSur utilise tomcat-embed-core et tomcat-embed-websocket via Spring Boot. Les deux JAR ont ete
+        verifies et ne contiennent ni l'application examples ni le chemin websocket/chat. Apache indique
+        egalement que les installations ayant retire l'application examples ne sont pas affectees. Regle
+        temporaire a retirer lors du passage a Tomcat 11.0.25 ou a une version ulterieure publiee.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat-embed-(core|websocket)@11\.0\.24$</packageUrl>
+        <cve>CVE-2026-66299</cve>
+    </suppress>
+</suppressions>

@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: RepasSur
+    orgId: 1
+    folder: RepasSur
+    type: file
+    disableDeletion: true
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards

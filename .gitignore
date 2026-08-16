@@ -13,3 +13,6 @@ package-lock.json
 **/.angular/cache/
 *.log
 *.tmp
+dependency-check-data/
+lighthouse-report.report.html
+lighthouse-report.report.json

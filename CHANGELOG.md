@@ -6,7 +6,11 @@ une structure inspirée de Keep a Changelog.
 
 ## [Unreleased]
 
-Version de développement actuelle : `2.4.0-dev.0`.
+Aucune modification enregistrée depuis la version 2.4.0.
+
+## [2.4.0] - 2026-08-17
+
+Première version appliquant strictement Semantic Versioning.
 
 ### Ajouté
 
@@ -35,6 +39,13 @@ Version de développement actuelle : `2.4.0-dev.0`.
 - Guides de gestion des dépendances, supervision, incidents, correctifs,
   améliorations et retours utilisateurs.
 
+### Déploiement
+
+- Version validée et exécutée localement avec Docker Compose.
+- Pull Request #37 fusionnée dans `main`.
+- Tests backend et frontend réussis.
+- Supervision Prometheus, Grafana et Blackbox Exporter validée.
+
 ## Historique antérieur à Semantic Versioning strict
 
 Les tags ci-dessous existent dans Git. Leur suffixe `-rncp7` ne suit pas la
@@ -50,4 +61,5 @@ déploiement en production.
 | `v1.1-rncp7` | 2026-03-05 | Évolutions de la CI |
 | `v1.0-rncp7` | 2026-03-04 | Sécurisation et intégration continue |
 
-[Unreleased]: https://github.com/BoubakriYoussef/repas_sur2/compare/v2.3-rncp7...HEAD
+[Unreleased]: https://github.com/BoubakriYoussef/repas_sur2/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/BoubakriYoussef/repas_sur2/compare/v2.3-rncp7...v2.4.0

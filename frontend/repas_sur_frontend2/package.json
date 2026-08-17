@@ -1,6 +1,6 @@
 {
   "name": "repas_sur_frontend2_tmp",
-  "version": "2.4.0-dev.0",
+  "version": "2.4.0",
   "private": true,
   "scripts": {
     "ng": "ng",

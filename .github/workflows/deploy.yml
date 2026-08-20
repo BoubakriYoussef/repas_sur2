@@ -27,11 +27,14 @@ jobs:
     steps:
       - name: Deploy on VPS over SSH
         uses: appleboy/ssh-action@v1.2.0
+        env:
+          GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
+          envs: GRAFANA_ADMIN_PASSWORD
           script: |
             set -e
 
@@ -54,6 +57,22 @@ jobs:
             cd "$APP_DIR"
             git fetch --tags origin
 
+            if [ -z "$GRAFANA_ADMIN_PASSWORD" ]; then
+              echo "Le secret GRAFANA_ADMIN_PASSWORD est absent."
+              exit 1
+            fi
+
+            if [ ! -f .env ]; then
+              echo "Le fichier $APP_DIR/.env est absent."
+              exit 1
+            fi
+
+            if grep -q '^GRAFANA_ADMIN_PASSWORD=' .env; then
+              sed -i "s|^GRAFANA_ADMIN_PASSWORD=.*$|GRAFANA_ADMIN_PASSWORD=$GRAFANA_ADMIN_PASSWORD|" .env
+            else
+              printf '\nGRAFANA_ADMIN_PASSWORD=%s\n' "$GRAFANA_ADMIN_PASSWORD" >> .env
+            fi
+
             if [ "$DEPLOY_REF" = "main" ]; then
               git checkout main
               git pull --ff-only origin main
@@ -70,10 +89,26 @@ jobs:
               -f docker-compose.prod.yml \
               up -d --build --remove-orphans
 
-            curl --fail --silent --show-error http://127.0.0.1/ > /dev/null
+            docker compose \
+              --env-file .env \
+              -f docker-compose.yml \
+              -f docker-compose.prod.yml \
+              ps
+
+            FRONTEND_STATUS="$(curl --fail --silent --show-error \
+              --output /dev/null --write-out '%{http_code}' \
+              http://127.0.0.1/)"
             HEALTH="$(curl --fail --silent --show-error \
               http://127.0.0.1:8080/actuator/health)"
+            test "$FRONTEND_STATUS" = "200"
             echo "$HEALTH" | grep -q '"status":"UP"'
+            if echo "$HEALTH" | grep -Eq '"(components|details)"'; then
+              echo "La reponse Actuator expose des details internes."
+              exit 1
+            fi
+
+            echo "FRONTEND_HTTP_STATUS=$FRONTEND_STATUS"
+            echo "ACTUATOR_HEALTH=$HEALTH"
 
             mkdir -p .deployment
             printf '%s\n' "$DEPLOYED_VERSION" > .deployment/version

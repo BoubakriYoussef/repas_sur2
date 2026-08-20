@@ -96,9 +96,13 @@ jobs:
               ps
 
             FRONTEND_STATUS="$(curl --fail --silent --show-error \
+              --retry 24 --retry-delay 5 --retry-max-time 120 \
+              --retry-all-errors \
               --output /dev/null --write-out '%{http_code}' \
               http://127.0.0.1/)"
             HEALTH="$(curl --fail --silent --show-error \
+              --retry 24 --retry-delay 5 --retry-max-time 120 \
+              --retry-all-errors \
               http://127.0.0.1:8080/actuator/health)"
             test "$FRONTEND_STATUS" = "200"
             echo "$HEALTH" | grep -q '"status":"UP"'

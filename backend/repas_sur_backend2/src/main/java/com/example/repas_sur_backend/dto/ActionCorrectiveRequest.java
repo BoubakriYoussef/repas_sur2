@@ -8,7 +8,6 @@ public record ActionCorrectiveRequest(
     @NotNull LocalDateTime date,
     @NotBlank String typeAction,
     String description,
-    @NotNull Long alerteId,
-    @NotNull Long utilisateurId
+    @NotNull Long alerteId
 ) {
 }

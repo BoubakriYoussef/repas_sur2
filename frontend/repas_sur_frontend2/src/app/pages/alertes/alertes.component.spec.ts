@@ -71,8 +71,8 @@ describe('AlertesComponent', () => {
     expect(alerteApi.updateEtat).toHaveBeenCalledWith(1, { etat: 'EN_COURS' });
   });
 
-  it('filtre par etat, niveau et dates puis reinitialise', () => {
-    component.filterForm.setValue({ etat: 'NOUVELLE', niveau: 'FORT', dateFrom: '2026-07-17', dateTo: '2026-07-18' });
+  it('inclut toute la journee selectionnee dans les bornes de dates puis reinitialise', () => {
+    component.filterForm.setValue({ etat: 'NOUVELLE', niveau: 'FORT', dateFrom: '2026-07-17', dateTo: '2026-07-17' });
     component.applyFilters();
     expect(component.filtered).toEqual([alertes[0]]);
 

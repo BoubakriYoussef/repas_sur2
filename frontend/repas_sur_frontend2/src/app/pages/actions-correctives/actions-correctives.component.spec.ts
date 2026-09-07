@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, of, throwError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActionCorrectiveDto } from '../../core/models/action-corrective.dto';
 import { AlerteRisqueDto } from '../../core/models/alerte.dto';
 import { UtilisateurDto } from '../../core/models/utilisateur.dto';
@@ -18,7 +19,8 @@ describe('ActionsCorrectivesComponent', () => {
   let queryParamMap$: BehaviorSubject<ReturnType<typeof convertToParamMap>>;
 
   const alertes: AlerteRisqueDto[] = [
-    { id: 1, etat: 'NOUVELLE', niveau: 'FORT', message: 'Critique', dateCreation: '2026-07-17T10:00:00.000Z', convive: { id: 4, nom: 'Alice' }, service: null, allergenes: [] }
+    { id: 1, etat: 'NOUVELLE', niveau: 'FORT', message: 'Critique', dateCreation: '2026-07-17T10:00:00.000Z', convive: { id: 4, nom: 'Alice' }, service: null, allergenes: [] },
+    { id: 2, etat: 'NOUVELLE', niveau: 'MOYEN', message: 'A traiter', dateCreation: '2026-07-17T11:00:00.000Z', convive: { id: 5, nom: 'Bob' }, service: null, allergenes: [] }
   ];
   const utilisateurs: UtilisateurDto[] = [
     { id: 2, username: 'admin', email: null, telephone: null, poste: null, role: 'ADMIN', actif: true, site: null }
@@ -88,16 +90,14 @@ describe('ActionsCorrectivesComponent', () => {
       date: '2026-07-17T10:00',
       typeAction: 'REMPLACER_PLAT',
       description: 'Action',
-      alerteId: '1' as unknown as number,
-      utilisateurId: '2' as unknown as number
+      alerteId: '2' as unknown as number
     });
     component.submit();
     expect(actionApi.create).toHaveBeenCalledWith({
       date: new Date('2026-07-17T10:00').toISOString(),
       typeAction: 'REMPLACER_PLAT',
       description: 'Action',
-      alerteId: 1,
-      utilisateurId: 2
+      alerteId: 2
     });
 
     component.startEdit(actions[0]);
@@ -106,8 +106,8 @@ describe('ActionsCorrectivesComponent', () => {
     expect(actionApi.update).toHaveBeenCalledWith(6, jasmine.objectContaining({ description: 'Action 2' }));
   });
 
-  it('filtre par alerte, utilisateur et dates puis reinitialise', () => {
-    component.filterForm.setValue({ alerteId: '1', utilisateurId: '2', dateFrom: '2026-07-17', dateTo: '2026-07-18' });
+  it('inclut toute la journee selectionnee dans les bornes de dates puis reinitialise', () => {
+    component.filterForm.setValue({ alerteId: '1', utilisateurId: '2', dateFrom: '2026-07-17', dateTo: '2026-07-17' });
     component.applyFilters();
     expect(component.filtered).toEqual(actions);
 
@@ -124,11 +124,20 @@ describe('ActionsCorrectivesComponent', () => {
       date: '',
       typeAction: 'REMPLACER_PLAT',
       description: '',
-      alerteId: 1,
-      utilisateurId: 2
+      alerteId: 2
     });
 
     component.remove(6);
     expect(actionApi.delete).toHaveBeenCalledWith(6);
+  });
+
+  it('affiche un message lorsque la suppression est interdite au role cuisine', () => {
+    actionApi.delete.and.returnValue(throwError(() => new HttpErrorResponse({ status: 403 })));
+
+    component.remove(6);
+    fixture.detectChanges();
+
+    expect(component.errorMessage).toContain('role Cuisine');
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain('Suppression refusee');
   });
 });

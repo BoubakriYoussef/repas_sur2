@@ -9,7 +9,7 @@
 
     <form class="mt-4 grid gap-3" [formGroup]="siteForm" (ngSubmit)="createSite()">
       <input class="w-full rounded-xl border border-stroke px-4 py-2" placeholder="Nom" formControlName="nom" />
-      <select class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="type">
+      <select class="w-full rounded-xl border border-stroke px-4 py-2" aria-label="Type de site" formControlName="type">
         <option value="SCOLAIRE">SCOLAIRE</option>
         <option value="EHPAD">EHPAD</option>
         <option value="ENTREPRISE">ENTREPRISE</option>
@@ -49,7 +49,7 @@
     <form class="mt-4 grid gap-3" [formGroup]="regimeForm" (ngSubmit)="createRegime()">
       <input class="w-full rounded-xl border border-stroke px-4 py-2" placeholder="Code" formControlName="code" />
       <input class="w-full rounded-xl border border-stroke px-4 py-2" placeholder="Libelle" formControlName="libelle" />
-      <select class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="type">
+      <select class="w-full rounded-xl border border-stroke px-4 py-2" aria-label="Type de regime" formControlName="type">
         <option value="ALIMENTAIRE">ALIMENTAIRE</option>
         <option value="RELIGIEUX">RELIGIEUX</option>
         <option value="MEDICAL">MEDICAL</option>

@@ -8,7 +8,7 @@
 <form class="mt-6 grid gap-4 rounded-3xl border border-stroke bg-card p-6 shadow-soft" [formGroup]="form" (ngSubmit)="submit()">
   <div class="grid gap-4 md:grid-cols-3">
     <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Nom" formControlName="nom" />
-    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="categorie">
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" aria-label="Categorie du plat" formControlName="categorie">
       <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
     </select>
     <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Description" formControlName="description" />

@@ -16,5 +16,4 @@ export interface ActionCorrectiveRequest {
   typeAction: string;
   description?: string | null;
   alerteId: number;
-  utilisateurId: number;
 }

@@ -53,17 +53,7 @@ class AlerteRisqueServiceTest {
     private AlerteRisqueService alerteRisqueService;
 
     @Test
-    void genererAlertesPourService_returnsEmptyWhenAlreadyGenerated() {
-        when(alerteRisqueRepository.existsByServiceId(1L)).thenReturn(true);
-
-        List<AlerteRisqueDto> result = alerteRisqueService.genererAlertesPourService(1L);
-
-        assertThat(result).isEmpty();
-        verify(alerteRisqueRepository, never()).save(org.mockito.ArgumentMatchers.any());
-    }
-
-    @Test
-    void genererAlertesPourService_createsAllergeneAlert() {
+    void genererAlertesPourService_skipsExistingConviveAndCreatesMissingAlert() {
         Allergene gluten = new Allergene();
         gluten.setId(1L);
         gluten.setCode("GLUTEN");
@@ -87,17 +77,25 @@ class AlerteRisqueServiceTest {
         convive.setAllergenes(Set.of(gluten));
         convive.setRegimes(Set.of());
 
+        Convive dejaTraite = new Convive();
+        dejaTraite.setId(4L);
+        dejaTraite.setNom("Dupont");
+        dejaTraite.setPrenom("Emma");
+        dejaTraite.setAllergenes(Set.of(gluten));
+        dejaTraite.setRegimes(Set.of());
+
         SiteRestauration site = new SiteRestauration();
         site.setId(3L);
         site.setNom("Site");
-        site.setConvives(Set.of(convive));
+        site.setConvives(Set.of(dejaTraite, convive));
 
         ServiceRepas service = new ServiceRepas();
         service.setId(1L);
         service.setSite(site);
         service.setMenu(menu);
 
-        when(alerteRisqueRepository.existsByServiceId(1L)).thenReturn(false);
+        when(alerteRisqueRepository.existsByServiceIdAndConviveId(1L, 4L)).thenReturn(true);
+        when(alerteRisqueRepository.existsByServiceIdAndConviveId(1L, 5L)).thenReturn(false);
         when(serviceRepasRepository.findById(1L)).thenReturn(Optional.of(service));
         when(alerteRisqueRepository.save(org.mockito.ArgumentMatchers.any()))
             .thenAnswer(invocation -> {
@@ -120,7 +118,6 @@ class AlerteRisqueServiceTest {
         ServiceRepas service = new ServiceRepas();
         service.setId(1L);
         service.setSite(new SiteRestauration());
-        when(alerteRisqueRepository.existsByServiceId(1L)).thenReturn(false);
         when(serviceRepasRepository.findById(1L)).thenReturn(Optional.of(service));
 
         assertThat(alerteRisqueService.genererAlertesPourService(1L)).isEmpty();
@@ -156,7 +153,7 @@ class AlerteRisqueServiceTest {
         service.setMenu(menu);
         service.setSite(site);
 
-        when(alerteRisqueRepository.existsByServiceId(2L)).thenReturn(false);
+        when(alerteRisqueRepository.existsByServiceIdAndConviveId(2L, 6L)).thenReturn(false);
         when(serviceRepasRepository.findById(2L)).thenReturn(Optional.of(service));
         when(alerteRisqueRepository.save(org.mockito.ArgumentMatchers.any()))
             .thenAnswer(invocation -> invocation.getArgument(0));

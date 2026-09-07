@@ -87,10 +87,6 @@ public class AlerteRisqueService {
     }
 
     public List<AlerteRisqueDto> genererAlertesPourService(Long serviceId) {
-        if (alerteRisqueRepository.existsByServiceId(serviceId)) {
-            return List.of();
-        }
-
         ServiceRepas service = serviceRepasRepository.findById(serviceId)
             .orElseThrow(() -> new NotFoundException("ServiceRepas not found: " + serviceId));
 
@@ -121,6 +117,10 @@ public class AlerteRisqueService {
 
         List<AlerteRisqueDto> created = new ArrayList<>();
         for (Convive convive : service.getSite().getConvives()) {
+            if (alerteRisqueRepository.existsByServiceIdAndConviveId(serviceId, convive.getId())) {
+                continue;
+            }
+
             Set<Allergene> allergenesConvive = convive.getAllergenes();
             Set<Allergene> intersection = new HashSet<>();
             if (allergenesConvive != null) {

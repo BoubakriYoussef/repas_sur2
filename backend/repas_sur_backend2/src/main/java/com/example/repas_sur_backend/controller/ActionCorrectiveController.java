@@ -4,6 +4,7 @@ import com.example.repas_sur_backend.dto.ActionCorrectiveDto;
 import com.example.repas_sur_backend.dto.ActionCorrectiveRequest;
 import com.example.repas_sur_backend.service.ActionCorrectiveService;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +42,11 @@ public class ActionCorrectiveController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','RESPONSABLE','CUISINE')")
-    public ResponseEntity<ActionCorrectiveDto> create(@Valid @RequestBody ActionCorrectiveRequest request) {
-        ActionCorrectiveDto created = actionCorrectiveService.save(request);
+    public ResponseEntity<ActionCorrectiveDto> create(
+        @Valid @RequestBody ActionCorrectiveRequest request,
+        Principal principal
+    ) {
+        ActionCorrectiveDto created = actionCorrectiveService.save(request, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 

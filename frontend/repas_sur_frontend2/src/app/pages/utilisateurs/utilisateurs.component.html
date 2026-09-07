@@ -18,14 +18,14 @@
   <div class="grid gap-4 md:grid-cols-3">
     <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Telephone" formControlName="telephone" />
     <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Poste" formControlName="poste" />
-    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="role">
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" aria-label="Role de l'utilisateur" formControlName="role">
       <option value="ADMIN">ADMIN</option>
       <option value="RESPONSABLE">RESPONSABLE</option>
       <option value="CUISINE">CUISINE</option>
     </select>
   </div>
   <div class="grid gap-4 md:grid-cols-3">
-    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="siteId">
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" aria-label="Site de l'utilisateur" formControlName="siteId">
       <option [ngValue]="null">Sans site</option>
       <option *ngFor="let site of sites" [ngValue]="site.id">{{ site.nom }}</option>
     </select>
@@ -44,13 +44,13 @@
 
 <form class="mt-4 grid gap-4 rounded-3xl border border-stroke bg-white/70 p-4 shadow-soft" [formGroup]="filterForm" (ngSubmit)="$event.preventDefault()">
   <div class="grid gap-4 md:grid-cols-3">
-    <select class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="role" (change)="applyFilters()">
+    <select class="w-full rounded-xl border border-stroke px-4 py-2" aria-label="Filtrer par role" formControlName="role" (change)="applyFilters()">
       <option value="TOUT">Tous les roles</option>
       <option value="ADMIN">ADMIN</option>
       <option value="RESPONSABLE">RESPONSABLE</option>
       <option value="CUISINE">CUISINE</option>
     </select>
-    <select class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="actif" (change)="applyFilters()">
+    <select class="w-full rounded-xl border border-stroke px-4 py-2" aria-label="Filtrer par statut" formControlName="actif" (change)="applyFilters()">
       <option value="TOUT">Tous les statuts</option>
       <option value="ACTIF">Actif</option>
       <option value="INACTIF">Inactif</option>

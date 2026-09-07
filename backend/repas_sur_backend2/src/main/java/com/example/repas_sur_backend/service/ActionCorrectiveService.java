@@ -6,6 +6,7 @@ import com.example.repas_sur_backend.dto.IdNomDto;
 import com.example.repas_sur_backend.dto.UtilisateurDto;
 import com.example.repas_sur_backend.dto.SiteRestaurationDto;
 import com.example.repas_sur_backend.exception.NotFoundException;
+import com.example.repas_sur_backend.exception.ConflictException;
 import com.example.repas_sur_backend.model.ActionCorrective;
 import com.example.repas_sur_backend.model.AlerteRisque;
 import com.example.repas_sur_backend.model.SiteRestauration;
@@ -45,14 +46,23 @@ public class ActionCorrectiveService {
         return toDto(findEntity(id));
     }
 
-    public ActionCorrectiveDto save(ActionCorrectiveRequest request) {
+    public ActionCorrectiveDto save(ActionCorrectiveRequest request, String authenticatedUsername) {
+        if (actionCorrectiveRepository.existsByAlerteId(request.alerteId())) {
+            throw new ConflictException("Une action corrective existe deja pour cette alerte");
+        }
         ActionCorrective action = new ActionCorrective();
         apply(action, request);
+        Utilisateur creator = utilisateurRepository.findByUsername(authenticatedUsername)
+            .orElseThrow(() -> new NotFoundException("Utilisateur authentifie introuvable: " + authenticatedUsername));
+        action.setUtilisateur(creator);
         return toDto(actionCorrectiveRepository.save(action));
     }
 
     public ActionCorrectiveDto update(Long id, ActionCorrectiveRequest request) {
         ActionCorrective action = findEntity(id);
+        if (actionCorrectiveRepository.existsByAlerteIdAndIdNot(request.alerteId(), id)) {
+            throw new ConflictException("Une action corrective existe deja pour cette alerte");
+        }
         apply(action, request);
         return toDto(actionCorrectiveRepository.save(action));
     }
@@ -69,14 +79,10 @@ public class ActionCorrectiveService {
     private void apply(ActionCorrective action, ActionCorrectiveRequest request) {
         AlerteRisque alerte = alerteRisqueRepository.findById(request.alerteId())
             .orElseThrow(() -> new NotFoundException("AlerteRisque not found: " + request.alerteId()));
-        Utilisateur utilisateur = utilisateurRepository.findById(request.utilisateurId())
-            .orElseThrow(() -> new NotFoundException("Utilisateur not found: " + request.utilisateurId()));
-
         action.setDate(request.date());
         action.setTypeAction(request.typeAction());
         action.setDescription(request.description());
         action.setAlerte(alerte);
-        action.setUtilisateur(utilisateur);
     }
 
     private ActionCorrectiveDto toDto(ActionCorrective action) {

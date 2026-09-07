@@ -247,7 +247,10 @@ class OperationsControllersWebMvcTest {
         );
         when(actionCorrectiveService.findAll()).thenReturn(List.of(dto));
         when(actionCorrectiveService.getById(4L)).thenReturn(dto);
-        when(actionCorrectiveService.save(org.mockito.ArgumentMatchers.any())).thenReturn(dto);
+        when(actionCorrectiveService.save(
+            org.mockito.ArgumentMatchers.any(),
+            org.mockito.ArgumentMatchers.eq("cook")
+        )).thenReturn(dto);
         when(actionCorrectiveService.update(org.mockito.ArgumentMatchers.eq(4L), org.mockito.ArgumentMatchers.any())).thenReturn(dto);
 
         mockMvc.perform(get("/api/actions-correctives").with(user("cook").roles("CUISINE")))
@@ -261,7 +264,7 @@ class OperationsControllersWebMvcTest {
             post("/api/actions-correctives")
                 .with(user("cook").roles("CUISINE"))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"date\":\"2026-07-17T13:00:00\",\"typeAction\":\"RETRAIT\",\"description\":\"Desc\",\"alerteId\":10,\"utilisateurId\":2}")
+                .content("{\"date\":\"2026-07-17T13:00:00\",\"typeAction\":\"RETRAIT\",\"description\":\"Desc\",\"alerteId\":10}")
         )
             .andExpect(status().isCreated());
 
@@ -269,7 +272,7 @@ class OperationsControllersWebMvcTest {
             put("/api/actions-correctives/4")
                 .with(user("manager").roles("RESPONSABLE"))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"date\":\"2026-07-17T13:00:00\",\"typeAction\":\"RETRAIT\",\"description\":\"Desc\",\"alerteId\":10,\"utilisateurId\":2}")
+                .content("{\"date\":\"2026-07-17T13:00:00\",\"typeAction\":\"RETRAIT\",\"description\":\"Desc\",\"alerteId\":10}")
         )
             .andExpect(status().isOk());
 

@@ -68,8 +68,8 @@ export class AlertesComponent {
 
   applyFilters(): void {
     const { etat, niveau, dateFrom, dateTo } = this.filterForm.getRawValue();
-    const from = dateFrom ? new Date(dateFrom) : null;
-    const to = dateTo ? new Date(dateTo) : null;
+    const from = dateFrom ? new Date(`${dateFrom}T00:00:00`) : null;
+    const to = dateTo ? new Date(`${dateTo}T23:59:59.999`) : null;
     this.filtered = this.alertes.filter((item) => {
       const matchEtat = etat === 'TOUT' || item.etat === etat;
       const matchNiveau = niveau === 'TOUT' || item.niveau === niveau;

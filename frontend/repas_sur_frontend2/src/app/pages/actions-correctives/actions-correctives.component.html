@@ -5,21 +5,29 @@
   </div>
 </div>
 
+<p *ngIf="errorMessage" class="mt-4 rounded-xl border border-accent2/40 bg-accent2/10 px-4 py-3 text-sm text-accent2" role="alert">
+  {{ errorMessage }}
+</p>
+
 <form class="mt-6 grid gap-4 rounded-3xl border border-stroke bg-card p-6 shadow-soft" [formGroup]="form" (ngSubmit)="submit()">
   <div class="grid gap-4 md:grid-cols-3">
-    <input type="datetime-local" class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="date" />
-    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="typeAction">
+    <label class="grid gap-1 text-xs text-muted">
+      Date et heure de l'action
+      <input type="datetime-local" class="w-full rounded-xl border border-stroke px-4 py-3 text-sm text-night" placeholder="Date et heure de l'action" aria-label="Date et heure de l'action" formControlName="date" />
+    </label>
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" aria-label="Type d'action corrective" formControlName="typeAction">
       <option *ngFor="let t of typeActions" [value]="t">{{ t }}</option>
     </select>
     <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Description" formControlName="description" />
   </div>
   <div class="grid gap-4 md:grid-cols-2">
-    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="alerteId">
-      <option *ngFor="let alerte of alertes" [value]="alerte.id">{{ alerte.convive?.nom || 'Convive' }} - {{ alerte.niveau }}</option>
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" aria-label="Alerte concernee" formControlName="alerteId">
+      <option value="0" disabled>Selectionner une alerte</option>
+      <option *ngFor="let alerte of alertesDisponibles" [value]="alerte.id">{{ alerte.convive?.nom || 'Convive' }} - {{ alerte.niveau }}</option>
     </select>
-    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="utilisateurId">
-      <option *ngFor="let user of utilisateurs" [value]="user.id">{{ user.username }} ({{ user.role }})</option>
-    </select>
+    <p class="text-xs text-accent2" *ngIf="form.controls['alerteId'].hasError('alreadyHasAction')">
+      Une action corrective existe deja pour cette alerte.
+    </p>
   </div>
   <div class="flex flex-wrap gap-3">
     <button type="submit" class="w-fit rounded-full bg-accent px-5 py-2 text-sm font-semibold text-white">
@@ -31,16 +39,22 @@
 
 <form class="mt-4 grid gap-4 rounded-3xl border border-stroke bg-white/70 p-4 shadow-soft" [formGroup]="filterForm" (ngSubmit)="$event.preventDefault()">
   <div class="grid gap-4 md:grid-cols-4">
-    <select class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="alerteId" (change)="applyFilters()">
+    <select class="w-full rounded-xl border border-stroke px-4 py-2" aria-label="Filtrer par alerte" formControlName="alerteId" (change)="applyFilters()">
       <option value="TOUT">Toutes les alertes</option>
       <option *ngFor="let alerte of alertes" [value]="alerte.id">{{ alerte.convive?.nom || 'Convive' }} - {{ alerte.niveau }}</option>
     </select>
-    <select class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="utilisateurId" (change)="applyFilters()">
+    <select class="w-full rounded-xl border border-stroke px-4 py-2" aria-label="Filtrer par utilisateur" formControlName="utilisateurId" (change)="applyFilters()">
       <option value="TOUT">Tous les utilisateurs</option>
       <option *ngFor="let user of utilisateurs" [value]="user.id">{{ user.username }} ({{ user.role }})</option>
     </select>
-    <input type="date" class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="dateFrom" (change)="applyFilters()" />
-    <input type="date" class="w-full rounded-xl border border-stroke px-4 py-2" formControlName="dateTo" (change)="applyFilters()" />
+    <label class="grid gap-1 text-xs text-muted">
+      Date de debut
+      <input type="date" class="w-full rounded-xl border border-stroke px-4 py-2 text-sm text-night" placeholder="Date de debut" aria-label="Date de debut" formControlName="dateFrom" (change)="applyFilters()" />
+    </label>
+    <label class="grid gap-1 text-xs text-muted">
+      Date de fin
+      <input type="date" class="w-full rounded-xl border border-stroke px-4 py-2 text-sm text-night" placeholder="Date de fin" aria-label="Date de fin" formControlName="dateTo" (change)="applyFilters()" />
+    </label>
   </div>
   <div class="flex">
     <button type="button" class="mt-2 rounded-full border border-stroke px-4 py-2 text-sm font-semibold" (click)="resetFilters()">Reinitialiser filtres</button>

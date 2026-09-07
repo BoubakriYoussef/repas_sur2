@@ -9,7 +9,7 @@
   <div class="grid gap-4 md:grid-cols-4">
     <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Nom" formControlName="nom" />
     <input class="w-full rounded-xl border border-stroke px-4 py-3" placeholder="Prenom" formControlName="prenom" />
-    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="typeConvive">
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" aria-label="Type de convive" formControlName="typeConvive">
       <option value="ENFANT_SCOLAIRE">ENFANT_SCOLAIRE</option>
       <option value="ADOLESCENT_SCOLAIRE">ADOLESCENT_SCOLAIRE</option>
       <option value="ETUDIANT">ETUDIANT</option>
@@ -20,7 +20,8 @@
       <option value="ADULTE_EXTERNE">ADULTE_EXTERNE</option>
       <option value="AUTRE">AUTRE</option>
     </select>
-    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="siteId">
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" aria-label="Site du convive" formControlName="siteId">
+      <option value="0" disabled>Selectionner un site</option>
       <option *ngFor="let site of sites" [value]="site.id">{{ site.nom }}</option>
     </select>
   </div>

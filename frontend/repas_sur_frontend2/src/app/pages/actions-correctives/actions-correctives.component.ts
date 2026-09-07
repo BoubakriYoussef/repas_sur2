@@ -3,11 +3,11 @@ import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActionCorrectiveApiService } from '../../core/services/action-corrective-api.service';
 import { AlerteApiService } from '../../core/services/alerte-api.service';
-import { UtilisateurApiService } from '../../core/services/utilisateur-api.service';
 import { ActionCorrectiveDto } from '../../core/models/action-corrective.dto';
 import { AlerteRisqueDto } from '../../core/models/alerte.dto';
 import { UtilisateurDto } from '../../core/models/utilisateur.dto';
 import { ActivatedRoute } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-actions-correctives',
@@ -21,6 +21,7 @@ export class ActionsCorrectivesComponent {
   alertes: AlerteRisqueDto[] = [];
   utilisateurs: UtilisateurDto[] = [];
   editingId: number | null = null;
+  errorMessage = '';
   typeActions: string[] = [
     'REMPLACER_PLAT',
     'MENU_ALTERNATIF',
@@ -32,19 +33,23 @@ export class ActionsCorrectivesComponent {
   form!: FormGroup;
   filterForm!: FormGroup;
 
+  get alertesDisponibles(): AlerteRisqueDto[] {
+    return this.alertes.filter((alerte) =>
+      !this.actions.some((action) => action.alerte?.id === alerte.id && action.id !== this.editingId)
+    );
+  }
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly actionApi: ActionCorrectiveApiService,
     private readonly alerteApi: AlerteApiService,
-    private readonly utilisateurApi: UtilisateurApiService,
     private readonly route: ActivatedRoute
   ) {
     this.form = this.fb.nonNullable.group({
       date: ['', [Validators.required]],
       typeAction: ['REMPLACER_PLAT', [Validators.required]],
       description: [''],
-      alerteId: [0, [Validators.required]],
-      utilisateurId: [0, [Validators.required]]
+      alerteId: [0, [Validators.required]]
     });
 
     this.filterForm = this.fb.nonNullable.group({
@@ -71,11 +76,18 @@ export class ActionsCorrectivesComponent {
     this.actionApi.getAll().subscribe({
       next: (data) => {
         this.actions = data;
+        this.utilisateurs = Array.from(
+          new Map(
+            data
+              .map((action) => action.utilisateur)
+              .filter((utilisateur): utilisateur is UtilisateurDto => utilisateur !== null)
+              .map((utilisateur) => [utilisateur.id, utilisateur] as const)
+          ).values()
+        );
         this.applyFilters();
       }
     });
     this.alerteApi.getAll().subscribe({ next: (data) => (this.alertes = data) });
-    this.utilisateurApi.getAll().subscribe({ next: (data) => (this.utilisateurs = data) });
   }
 
   submit(): void {
@@ -83,11 +95,18 @@ export class ActionsCorrectivesComponent {
       return;
     }
     const raw = this.form.getRawValue();
+    const alerteId = Number(raw.alerteId);
+    const alerteDejaTraitee = this.actions.some(
+      (action) => action.alerte?.id === alerteId && action.id !== this.editingId
+    );
+    if (alerteDejaTraitee) {
+      this.form.controls['alerteId'].setErrors({ alreadyHasAction: true });
+      return;
+    }
     const payload = {
       ...raw,
       date: new Date(raw.date).toISOString(),
-      alerteId: Number(raw.alerteId),
-      utilisateurId: Number(raw.utilisateurId)
+      alerteId
     };
 
     const request$ = this.editingId
@@ -108,8 +127,7 @@ export class ActionsCorrectivesComponent {
       date: this.toInputDate(item.date),
       typeAction: item.typeAction,
       description: item.description ?? '',
-      alerteId: item.alerte?.id ?? 0,
-      utilisateurId: item.utilisateur?.id ?? 0
+      alerteId: item.alerte?.id ?? 0
     });
   }
 
@@ -118,13 +136,21 @@ export class ActionsCorrectivesComponent {
   }
 
   remove(id: number): void {
-    this.actionApi.delete(id).subscribe({ next: () => this.load() });
+    this.errorMessage = '';
+    this.actionApi.delete(id).subscribe({
+      next: () => this.load(),
+      error: (error: HttpErrorResponse) => {
+        this.errorMessage = error.status === 403
+          ? "Suppression refusee : le role Cuisine n'est pas autorise a supprimer une action corrective."
+          : "Une erreur est survenue pendant la suppression de l'action corrective.";
+      }
+    });
   }
 
   applyFilters(): void {
     const { alerteId, utilisateurId, dateFrom, dateTo } = this.filterForm.getRawValue();
-    const from = dateFrom ? new Date(dateFrom) : null;
-    const to = dateTo ? new Date(dateTo) : null;
+    const from = dateFrom ? new Date(`${dateFrom}T00:00:00`) : null;
+    const to = dateTo ? new Date(`${dateTo}T23:59:59.999`) : null;
     this.filtered = this.actions.filter((item) => {
       const matchAlerte = alerteId === 'TOUT' || item.alerte?.id === Number(alerteId);
       const matchUtilisateur = utilisateurId === 'TOUT' || item.utilisateur?.id === Number(utilisateurId);
@@ -146,8 +172,7 @@ export class ActionsCorrectivesComponent {
       date: '',
       typeAction: 'REMPLACER_PLAT',
       description: '',
-      alerteId: this.alertes[0]?.id ?? 0,
-      utilisateurId: this.utilisateurs[0]?.id ?? 0
+      alerteId: this.alertesDisponibles[0]?.id ?? 0
     });
   }
 

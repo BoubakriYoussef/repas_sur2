@@ -7,22 +7,26 @@
 
 <form class="mt-6 grid gap-4 rounded-3xl border border-stroke bg-card p-6 shadow-soft" [formGroup]="form" (ngSubmit)="submit()">
   <div class="grid gap-4 md:grid-cols-3">
-    <input type="datetime-local" class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="dateService" />
-    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="typeRepas">
+    <label class="grid gap-1 text-xs text-muted">
+      Date et heure du service
+      <input type="datetime-local" class="w-full rounded-xl border border-stroke px-4 py-3 text-sm text-night" placeholder="Date et heure du service" aria-label="Date et heure du service" formControlName="dateService" />
+    </label>
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" aria-label="Type de repas" formControlName="typeRepas">
       <option value="DEJEUNER">DEJEUNER</option>
       <option value="DINER">DINER</option>
     </select>
-    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="statut">
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" aria-label="Statut du service" formControlName="statut">
       <option value="PREVU">PREVU</option>
       <option value="SERVI">SERVI</option>
       <option value="ANNULE">ANNULE</option>
     </select>
   </div>
   <div class="grid gap-4 md:grid-cols-2">
-    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="siteId">
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" aria-label="Site de restauration" formControlName="siteId">
+      <option value="0" disabled>Selectionner un site</option>
       <option *ngFor="let site of sites" [value]="site.id">{{ site.nom }}</option>
     </select>
-    <select class="w-full rounded-xl border border-stroke px-4 py-3" formControlName="menuId">
+    <select class="w-full rounded-xl border border-stroke px-4 py-3" aria-label="Menu du service" formControlName="menuId">
       <option [ngValue]="null">Sans menu</option>
       <option *ngFor="let menu of menus" [ngValue]="menu.id">{{ menu.nom }}</option>
     </select>
